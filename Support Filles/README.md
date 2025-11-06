@@ -4,6 +4,27 @@ This repository is prepared as a small LaTeX workspace that you can use as an al
 - An example XeLaTeX document that uses Greek (`examples/report.tex`).
 - A `Makefile` and `build.sh` to compile the example with `xelatex` (via `latexmk`).
 - A `Dockerfile` and `.devcontainer/devcontainer.json` so you can open the Codespace in a reproducible container with TeX Live installed.
+- **Clean workspace organization**: All auxiliary files (`.aux`, `.log`, `.out`, etc.) are automatically placed in a `build/` subdirectory, keeping your main folders clean.
+
+## Project Structure
+
+Your workspace will stay organized like this:
+
+```
+your-project/
+├── your-document.tex          # Your LaTeX source file
+├── your-document.pdf          # Generated PDF (copied from build/)
+├── images/                    # Your images/figures
+│   └── diagram.png
+├── build/                     # Hidden folder with all auxiliary files
+│   ├── your-document.aux
+│   ├── your-document.log
+│   ├── your-document.out
+│   ├── your-document.synctex.gz
+│   └── ...
+```
+
+The `build/` folder is hidden in VS Code Explorer by default, so you only see your `.tex` files, images, and the final PDF!
 
 ## Quick usage (local machine)
 
