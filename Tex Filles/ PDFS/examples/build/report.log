@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.11.6)  6 NOV 2025 11:09
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2025.11.6)  6 NOV 2025 11:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -647,7 +647,7 @@ Package: listings 2023/02/27 1.9 (Carsten Heinz)
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 )
-No file report.aux.
+(build/report.aux)
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
@@ -661,7 +661,7 @@ LaTeX Font Info:    ... okay on input line 50.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 50.
 LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 5
 0.
-(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 50.
@@ -781,12 +781,9 @@ nslations-basic-dictionary')
 Package translations Info: loading dictionary `translations-basic-dictionary' f
 or `english'. on input line 50.
 Package hyperref Info: Link coloring OFF on input line 50.
+ (build/report.out) (build/report.out)
 \@outlinefile=\write3
 \openout3 = `report.out'.
-
-
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
 
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
@@ -794,6 +791,7 @@ Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count332
 LaTeX Font Info:    Trying to load font information for U+msa on input line 52.
+
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -803,15 +801,15 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 52.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-No file report.toc.
+) (build/report.toc)
 \tf@toc=\write4
 \openout4 = `report.toc'.
+
 
 [1
 
 ]
-Overfull \hbox (11.78355pt too wide) in paragraph at lines 97--99
+Overfull \hbox (15.41956pt too wide) in paragraph at lines 97--99
  []\TU/NotoSerif(1)/b/n/12 Συντελεστές διόρθωσης.[] \TU/NotoSerif(1)/m/n/12 Για
  Ζ.Ν.Χ. μόνο, $\OML/cmm/m/it/12 k[] \OT1/cmr/m/n/12 = []$
  []
@@ -883,24 +881,14 @@ Overfull \hbox (116.7615pt too wide) in paragraph at lines 301--303
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `report.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  844264BB6DFEE1B98C26ECF957409E36;3772.
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: 844264BB6DFEE1B98C26ECF957409E36;3772.
  ) 
 Here is how much of TeX's memory you used:
- 21493 strings out of 476872
- 461163 string characters out of 5804586
+ 21507 strings out of 476846
+ 461464 string characters out of 5803824
  2196627 words of memory out of 5000000
- 43108 multiletter control sequences out of 15000+600000
+ 43136 multiletter control sequences out of 15000+600000
  567821 words of font info for 147 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  79i,9n,117p,446b,2263s stack positions out of 10000i,1000n,20000p,200000b,200000s

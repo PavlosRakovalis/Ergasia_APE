@@ -32,7 +32,7 @@ Install the needed packages on Ubuntu (example):
 
 ```bash
 sudo apt update
-sudo apt install -y latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-greek fonts-noto fonts-dejavu-core
+sudo apt install -y latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-greek texlive-science fonts-noto fonts-dejavu-core
 ```
 
 Then build the example PDF:
@@ -40,10 +40,10 @@ Then build the example PDF:
 ```bash
 make
 # or
-./build.sh examples/report.tex
+./build.sh "../Tex Filles/ PDFS/examples/report.tex"
 ```
 
-The PDF will be created next to the `.tex` file (for the sample: `examples/report.pdf`).
+The PDF will be created next to the `.tex` file (at: `../Tex Filles/ PDFS/examples/report.pdf`).
 
 ## Using the Docker container (recommended for Codespaces)
 

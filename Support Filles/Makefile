@@ -1,13 +1,13 @@
-LATEXMK = latexmk -xelatex -pdf -interaction=nonstopmode -synctex=1
-TEX = examples/report.tex
-PDF = examples/report.pdf
+LATEXMK = latexmk -pdfxe -interaction=nonstopmode -synctex=1 -output-directory=build
+TEX = ../Tex\ Filles/\ PDFS/examples/report.tex
+PDF = ../Tex\ Filles/\ PDFS/examples/report.pdf
 
 .PHONY: all clean
 
 all: $(PDF)
 
 $(PDF): $(TEX)
-	$(LATEXMK) $(TEX)
+	cd "../Tex Filles/ PDFS/examples" && latexmk -pdfxe -interaction=nonstopmode -synctex=1 -output-directory=build report.tex && cp build/report.pdf .
 
 clean:
-	latexmk -C -xelatex $(TEX)
+	cd "../Tex Filles/ PDFS/examples" && latexmk -C -pdfxe report.tex
