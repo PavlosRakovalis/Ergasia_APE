@@ -4,23 +4,56 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ---------- Title ----------
-\title{Μελέτη Ηλιοθερμικού Συστήματος Ζ.Ν.Χ. με Μέθοδο f-Chart\\
-\large Ξενοδοχείο {300} κλινών --- Κλιματική Ζώνη \textDelta}
-\author{ΑΕΜ: 6903 (Άθροισμα: 9) \\ Ημερομηνία: 2025-11-06}
-\date{}
+\title{\vspace{1.2cm}\textbf{Μελέτη Ηλιοθερμικού Συστήματος Ζ.Ν.Χ. με Μέθοδο f-Chart}\\
+\large\textbf{Ξενοδοχείο 300 κλινών --- Κλιματική Ζώνη \textDelta}}
+\author{\textbf{Παύλος Ρακοβαλής}\\ΑΕΜ: 6903 (Άθροισμα: 9)}
+\date{\textbf{\today}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%document starts here
 \begin{document}
+
+%set AERONAUTICS_REPORT_TEMPLATE as template JUST for this page
+%the asterisk means it will be set just for this page
+\AddToShipoutPicture*{\BackgroundPic}
 \maketitle
+
+%leave space for abstract
+\vspace{2cm}
 
 \begin{abstract}
 Στην παρούσα εργασία εφαρμόζεται η μέθοδος f-Chart για τη διαστασιολόγηση ηλιοθερμικού συστήματος παραγωγής Ζεστού Νερού Χρήσης (Ζ.Ν.Χ.) σε ξενοδοχείο \num{300} κλινών εντός κλιματικής ζώνης \textDelta. Τεκμηριώνονται οι παραδοχές και τα δεδομένα με αναφορές στις τεχνικές οδηγίες ΤΟΤΕΕ 20701-1/2017 και ΤΟΤΕΕ 20701-3/2010, και παρουσιάζεται ο κώδικας (MATLAB) που χρησιμοποιήθηκε ανά υποερώτημα.
 \end{abstract}
 
-\tableofcontents
-\newpage
+%leave space before contents
+\vspace{4cm}
 
-\section{Δεδομένα, παραδοχές και κανονιστικά πλαίσια}
+%shows contents automatically
+\tableofcontents{}
+
+%change page
+\pagebreak
+
+%create new command about pics on all other pages
+\ClearShipoutPicture
+\newcommand\Bgpic{
+    \put(-4,0){
+    \parbox[b][\paperheight]{\paperwidth}{%
+    \vfill
+    \centering
+    \includegraphics[width=\paperwidth,height=\paperheight]{AERONAUTICS_REPORT_TEMPLATE-pages-2.pdf}
+    \vfill
+    }}}
+
+%set background picture for every page after page 2, including page 2
+%see, no asterisk
+\AddToShipoutPicture{\Bgpic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Δεδομένα, παραδοχές και κανονιστικά πλαίσια }
 \subsection{Τύπος συλλεκτών και αποδόσεις}
 Με βάση την εκφώνηση, για άθροισμα ΑΕΜ=9 επιλέγεται \textbf{συλλέκτης κενού}. Οι συντελεστές απόδοσης λαμβάνονται από τον \emph{Πίνακα 5.10} της ΤΟΤΕΕ~20701-1/2017: $\eta_0 \rightarrow F R(\tau \alpha)_n$ και $\alpha_1 \rightarrow F R U_L$. % Εικόνα από ΤΟΤΕΕ 20701-1/2017, Πίνακας 5.10
 \\Παραπομπή: βλέπε ΤΟΤΕΕ 20701-1/2017, Πίν.~2.5 (κατανάλωση ΖΝΧ ανά χρήση), Πίν.~5.10 (παράμετροι συλλεκτών).

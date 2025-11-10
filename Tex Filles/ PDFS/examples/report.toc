@@ -1,6 +1,6 @@
 \xpginauxfiletrue 
 \selectlanguage *{greek}
-\contentsline {section}{\numberline {1}Δεδομένα, παραδοχές και κανονιστικά πλαίσια}{3}{section.1}%
+\contentsline {section}{\numberline {1}Δεδομένα, παραδοχές και κανονιστικά πλαίσια }{3}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Τύπος συλλεκτών και αποδόσεις}{3}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Κλιματικά δεδομένα και θερμοκρασίες}{3}{subsection.1.2}%
 \contentsline {subsection}{\numberline {1.3}Ημερήσιο φορτίο Ζ.Ν.Χ.}{3}{subsection.1.3}%
