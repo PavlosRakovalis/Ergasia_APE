@@ -1,0 +1,60 @@
+% !TEX program = xelatex
+\documentclass{article}
+\input{preamble.tex}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{\vspace{1.2cm}\textbf{My Title}}
+\date{\textbf{\today}}
+\author{\textbf{Παύλος Ρακοβαλής}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%document starts here, who would have imagined that?
+\begin{document}
+%set AERONAUTICS_REPORT_TEMPLATE as template JUST for this page
+%the asterisk means it will be set just for this page
+\AddToShipoutPicture*{\BackgroundPic}
+\maketitle
+%leave a bunch of empty space for the contents
+\vspace{6cm}
+%shows contents automatically. Every section, subsection, etc automatically shows up here
+\tableofcontents{}
+%change page
+\pagebreak
+%create new command about pics on all other pages
+\ClearShipoutPicture
+\newcommand\Bgpic{
+    \put(-4,0){
+    \parbox[b][\paperheight]{\paperwidth}{%
+    \vfill
+    \centering
+    \includegraphics[width=\paperwidth,height=\paperheight]{AERONAUTICS_REPORT_TEMPLATE-pages-2.pdf}
+    \vfill
+    }}}
+%set background picture for every page after page 2, including page 2
+%see, no asterisk
+\AddToShipoutPicture{\Bgpic}
+%yay, our first section, who would have thought
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Section1}
+
+
+
+
+
+
+
+
+\end{document}
