@@ -32,15 +32,24 @@
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+*.nav
+*.snm
+*.vrb
 
 # PDF files (generated output)
 *.pdf
 
 # Build directories
 build/
+**/build/
 
 # macOS
 .DS_Store
 
 # Windows
 Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
