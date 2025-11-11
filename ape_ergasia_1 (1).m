@@ -106,7 +106,7 @@ V_dexamenis = 75*Ac ; % "lt"
 
  %--------------------------------------------------------------------------------------------
  
- % erwtimama 4
+% erwtimama 4
  
 L_dec = N(12)*HKznx*p*Cp*(Tznx-Tk(12))*10^(-3);
 
@@ -133,8 +133,10 @@ for Ac_new = 0:0.25:Ac_new_max
         continue
     end
 
-    % Υπολογισμός περίσσειας ενέργειας καλοκαιριού
-    Qsummer_excess = sum( (f_new(5:8) - 1) .* L(5:8) .* (f_new(5:8) > 1) );
+    % Υπολογισμός περίσσειας ενέργειας για όλους τους μήνες με f_new > 1
+    excess_energy = (f_new - 1) .* L;
+    excess_energy(f_new <= 1) = 0;  % Μηδενισμός για μήνες χωρίς υπερπαραγωγή
+    Qsummer_excess = sum(excess_energy);
     Qdecember = L(12);
     
     % Έλεγχος αν καλύπτεται η ζήτηση του Δεκεμβρίου
@@ -143,3 +145,46 @@ for Ac_new = 0:0.25:Ac_new_max
         break
     end
 end
+
+
+% Υπολογισμός ενέργειας που παράγεται από το ηλιακό σύστημα κάθε μήνα
+Q_solar = f_new .* L;  % Ενέργεια που παράγει το ηλιακό σύστημα
+
+% Δημιουργία γραφήματος
+figure;
+bar(1:12, Q_solar);
+hold on;
+plot(1:12, L, 'r--o', 'LineWidth', 2, 'MarkerSize', 6);
+hold off;
+
+% Προσθήκη ετικετών και τίτλου
+xlabel('Μήνας');
+ylabel('Ενέργεια (kWh)');
+title('Ενέργεια Ηλιακού Συστήματος vs Ενεργειακές Ανάγκες ανά Μήνα');
+legend('Ενέργεια Ηλιακού Συστήματος', 'Ενεργειακές Ανάγκες', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+
+
+% Γράφημα του παράγοντα f για κάθε μήνα
+f_new_plot = f_new;
+f_new_plot(12) = 0;  % Set December f value to zero for plotting
+
+figure;
+bar(1:12, f_new_plot);
+hold on;
+yline(1, 'r--', 'LineWidth', 2);
+hold off;
+
+% Προσθήκη ετικετών και τίτλου
+xlabel('Μήνας');
+ylabel('Παράγοντας f');
+title('Παράγοντας f ανά Μήνα');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+ylim([0 max(f_new_plot)*1.1]);
+
+

@@ -29,15 +29,6 @@
 %package needed for ASAT image template
 \usepackage{eso-pic}
 
-% ---------- Hyperlinks ----------
-%colour links, hrefs, etc whatever colour you like
-\usepackage[colorlinks = true,
-            linkcolor = black,
-            urlcolor  = blue,
-            citecolor = blue,
-            anchorcolor = blue,
-            unicode]{hyperref}
-
 %create a macro named BackgroundPic for setting a background on the first page
 \newcommand\BackgroundPic{
     \put(-3.4,0){
@@ -61,14 +52,14 @@
   numberstyle=\tiny\color{gray},
   stepnumber=1,
   showstringspaces=false,
-  frame=lines,
+  frame=single,
   breaklines=true,
   breakatwhitespace=false,
   tabsize=2,
   keepspaces=true,
   columns=flexible,
   xleftmargin=20pt,
-  xrightmargin=20pt,
+  xrightmargin=10pt,
   backgroundcolor=\color{gray!10},
   commentstyle=\color{green!50!black}\itshape,
   keywordstyle=\color{blue}\bfseries,
@@ -118,8 +109,13 @@
 % Δημιουργώ την εντολή \blue{} η οποία μου επιτρέπει να γράφω μπλε κείμενο
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
 
-
-% Δημιουργώ την εντολή \url{} η οποία μου επιτρέπει να γράφω url με μπλε χρώμα τα οποία θα είναι clickable links
+% ---------- Hyperlinks Configuration ----------
+% Δημιουργώ την ικανότητα να έχω url με μπλε χρώμα τα οποία θα είναι clickable links
 %URL: Μπορείς να βάλεις url με την εντολή \url{} και μετά καθορίζει οτι τα γράμματα του url θα είναι μπλέ
-\usepackage[hidelinks,draft=false]{hyperref}
-\hypersetup{colorlinks,linkcolor={blue!40!black!95!green},citecolor={blue!50!black},urlcolor={cyan!70!black}}
+\usepackage[colorlinks = true,
+            linkcolor = blue!40!black!95!green,
+            urlcolor  = cyan!70!black,
+            citecolor = blue!50!black,
+            anchorcolor = blue,
+            unicode,
+            hidelinks = false]{hyperref}
