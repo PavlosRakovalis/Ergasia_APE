@@ -113,7 +113,13 @@
 \newcommand{\red}[1]{\textcolor{red}{#1}}
 
 % Δημιουργώ την εντολή \green{} η οποία μου επιτρέπει να γράφω πράσινο κείμενο
-\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\green}[1]{\textcolor{green!50!black}{#1}}
 
 % Δημιουργώ την εντολή \blue{} η οποία μου επιτρέπει να γράφω μπλε κείμενο
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
+
+
+% Δημιουργώ την εντολή \url{} η οποία μου επιτρέπει να γράφω url με μπλε χρώμα τα οποία θα είναι clickable links
+%URL: Μπορείς να βάλεις url με την εντολή \url{} και μετά καθορίζει οτι τα γράμματα του url θα είναι μπλέ
+\usepackage[hidelinks,draft=false]{hyperref}
+\hypersetup{colorlinks,linkcolor={blue!40!black!95!green},citecolor={blue!50!black},urlcolor={cyan!70!black}}
