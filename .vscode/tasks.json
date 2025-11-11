@@ -6,6 +6,7 @@
       "type": "shell",
       "command": "xelatex",
       "args": [
+        "-shell-escape",
         "-interaction=nonstopmode",
         "-synctex=1",
         "${file}"
@@ -26,7 +27,7 @@
     {
       "label": "Build LaTeX twice (XeLaTeX)",
       "type": "shell",
-      "command": "xelatex -interaction=nonstopmode -synctex=1 \"${file}\" && xelatex -interaction=nonstopmode -synctex=1 \"${file}\"",
+      "command": "xelatex -shell-escape -interaction=nonstopmode -synctex=1 \"${file}\" && xelatex -shell-escape -interaction=nonstopmode -synctex=1 \"${file}\"",
       "options": {
         "cwd": "${fileDirname}"
       },

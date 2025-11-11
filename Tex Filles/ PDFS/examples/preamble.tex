@@ -58,13 +58,23 @@
   language=Matlab,
   basicstyle=\ttfamily\footnotesize,
   numbers=left,
-  numberstyle=\tiny,
+  numberstyle=\tiny\color{gray},
   stepnumber=1,
   showstringspaces=false,
-  frame=single,
+  frame=lines,
   breaklines=true,
+  breakatwhitespace=false,
   tabsize=2,
-  keepspaces=true
+  keepspaces=true,
+  columns=flexible,
+  xleftmargin=20pt,
+  xrightmargin=20pt,
+  backgroundcolor=\color{gray!10},
+  commentstyle=\color{green!50!black}\itshape,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{red!60!black},
+  morecomment=[l][\color{magenta}]{\#},
+  literate={*}{{\char42}}1 {-}{{\char45}}1
 }
 
 % ---------- Tables and Colors ----------
