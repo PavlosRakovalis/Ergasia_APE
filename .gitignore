@@ -36,8 +36,8 @@
 *.snm
 *.vrb
 
-# PDF files (generated output)
-*.pdf
+# PDF files (generated output) - commented out to allow report PDF
+# *.pdf
 
 # Build directories
 build/
