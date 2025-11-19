@@ -53,3 +53,10 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# TOTEE PDF files (to be added manually via GitHub)
+Tex Filles/PDF_Sources/TOTEE_20701-1_2017_TEE_1st_Edition.pdf
+Tex Filles/PDF_Sources/TOTEE_20701-3_2010_TEE_3nd_Edition.pdf
+
+# Generated report PDF
+Tex Filles/report.pdf
