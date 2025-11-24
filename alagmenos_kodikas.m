@@ -38,25 +38,20 @@ Ac_found = NaN;
 
 % --------------------------------------------------------------------------
 
-% erwtimama 1   Apaitoumeni epifaneia silektwn gia etisio f = 0.6
+% erwtimama 1
 
+% erwtimama 1
 for Ac = 0:0.25:Ac_max
    
      X = (Ac./L).*FR_mult_Ul.*FRdot_div_FR.*(Tanaf - Ta).*dt.*k1.*k2;
-
      Y = (Ac./L).*FR_mult_tan.*FRdot_div_FR.*ta_div_tan.*Hb.*k3;
-
      f = 1.029*Y - 0.065*X - 0.245.*(Y.^2) + 0.0018.*(X.^2) + 0.0215.*(Y.^3);
-
-
-
-
+     
      % === ΤΡΟΠΟΠΟΙΗΣΗ: Ορισμός μέγιστης μηνιαίας κάλυψης f = 1 ===
      f(f > 1) = 1; 
      
      % Σημείωση: Δεν χρειάζεται πλέον ο έλεγχος f_sum == 0 αφού το f είναι >= 0
      
-
      Li_mult_fi = L.*f ;
      SF =  sum(Li_mult_fi)/sum(L);
      
@@ -65,7 +60,6 @@ for Ac = 0:0.25:Ac_max
         break
     end
 end
-
 % Εμφάνισε αποτέλεσμα
 if ~isnan(Ac_found)
     fprintf('Ac = %d με SF = %.4f\n', Ac_found, SF);
@@ -75,7 +69,7 @@ end
 
 %--------------------------------------------------------------------------------------------
 
-% erwtimama 2    (Ipologismos ogkou dexamenis apothikeysis )
+% erwtimama 2
 
 V_dexamenis = 75*Ac ; % "lt"
 
@@ -89,7 +83,7 @@ V_dexamenis = 75*Ac ; % "lt"
 
  %--------------------------------------------------------------------------------------------
   
- % erwtimama 3   (Ipologsmos etisiws ekpompwn co2 prin kai meta thn egkatastash iliakou systimatos)
+ % erwtimama 3
 
  h_boiler = 0.8 ; % "σελίδα 34 οδηγός εργασίας"
  EF_CO2 = 0.264 ;
@@ -109,7 +103,7 @@ V_dexamenis = 75*Ac ; % "lt"
 
  %--------------------------------------------------------------------------------------------
  
-% erwtimama 4  (Ipologismos ogkoy dexamenis diepohiakis apothkeysis)
+ % erwtimama 4
  
 L_dec = N(12)*HKznx*p*Cp*(Tznx-Tk(12))*10^(-3);
 
@@ -136,10 +130,8 @@ for Ac_new = 0:0.25:Ac_new_max
         continue
     end
 
-    % Υπολογισμός περίσσειας ενέργειας για όλους τους μήνες με f_new > 1
-    excess_energy = (f_new - 1) .* L;
-    excess_energy(f_new <= 1) = 0;  % Μηδενισμός για μήνες χωρίς υπερπαραγωγή
-    Qsummer_excess = sum(excess_energy);
+    % Υπολογισμός περίσσειας ενέργειας καλοκαιριού
+    Qsummer_excess = sum( (f_new(6:8) - 1) .* L(6:8) .* (f_new(6:8) > 1) );
     Qdecember = L(12);
     
     % Έλεγχος αν καλύπτεται η ζήτηση του Δεκεμβρίου
@@ -149,67 +141,4 @@ for Ac_new = 0:0.25:Ac_new_max
     end
 end
 
-% Υπολογισμός ενέργειας που παράγεται από το ηλιακό σύστημα κάθε μήνα
-Q_solar = f_new .* L;  % Ενέργεια που παράγει το ηλιακό σύστημα
-Q_solar(12) = 0;  % Set December energy to zero for plotting
-
-% Δημιουργία γραφήματος
-figure;
-bar(1:12, Q_solar);
-hold on;
-plot(1:12, L, 'r--o', 'LineWidth', 2, 'MarkerSize', 6);
-hold off;
-
-% Προσθήκη ετικετών και τίτλου
-xlabel('Μήνας');
-ylabel('Ενέργεια (kWh)');
-title('Ενέργεια Ηλιακού Συστήματος vs Ενεργειακές Ανάγκες ανά Μήνα');
-legend('Ενέργεια Ηλιακού Συστήματος', 'Ενεργειακές Ανάγκες', 'Location', 'best');
-grid on;
-set(gca, 'XTick', 1:12);
-set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
-
-
-
-
-
-
-
-
-% Γράφημα του παράγοντα f για κάθε μήνα
-f_new_plot = f_new;
-f_new_plot(12) = 0;  % Set December f value to zero for plotting
-
-figure;
-bar(1:12, f_new_plot);
-hold on;
-yline(1, 'r--', 'LineWidth', 2);
-hold off;
-
-% Προσθήκη ετικετών και τίτλου
-xlabel('Μήνας');
-ylabel('Παράγοντας f');
-title('Παράγοντας f ανά Μήνα');
-grid on;
-set(gca, 'XTick', 1:12);
-set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
-ylim([0 max(f_new_plot)*1.1]);
-
-
-
-
-
-$$$$$$$$$$$$$$$$      Erotima 5  ###########   
-
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-Oysiastika tha valoume olokliro ton kodika apo tin arhi 
-
-
-tha allaksei:    1) 
-                 2) 
-
-$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
+f_new(12) = 0;
