@@ -89,7 +89,7 @@ V_dexamenis = 75*Ac ; % "lt"
 
  %--------------------------------------------------------------------------------------------
   
- % erwtimama 3   (Ipologsmos etisiws ekpompwn co2 prin kai meta thn egkatastash iliakou systimatos)
+ % erwtimama 3   (Ipologsmos etisiws ekpompwn co2 prin kai meta thn egkatastash iliakou systimatos)Ι
 
  h_boiler = 0.8 ; % "σελίδα 34 οδηγός εργασίας"
  EF_CO2 = 0.264 ;
@@ -206,10 +206,67 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 Oysiastika tha valoume olokliro ton kodika apo tin arhi 
 
 
-tha allaksei:    1) 
-                 2) 
+tha allaksei:    1) Οι μήνες απο τους οποίους παίρνουμε υπερπαραγωγή ενέργειας (f > 1) θα χρησιμοποιηθούν για την κάλυψη μέρος των αναγκών του μήνα Ιανουαρίου ο 
+οποίος έχει την χαμηλότερη θερμοκρασία νερόυ δικτύου και άρα μας συμφέρει περισσότερο η χρήση του ζεστού καλοκαιρινού νερόυ εκεί 
+
+                 2) Το 1 συνεπάγεται οτι θα αλλάξει και ο όγκος της δεξαμενής διεποχιακής αποθήκευσης 
+                
 
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
+$$$$$$$$$$$$ Βήμα 1: Υπολογισμός συνολικού υπερπαραγούμενου ζεστού νερόυ.
+
+% Βήμα 1: Εντοπισμός μηνών με f > 1 και υπολογισμός υπερπαραγωγής νερού
+excess_water_volume = zeros(1, 12);
+for i = 1:12
+    if f_new(i) > 1
+        % Υπολογισμός υπερπαραγωγής ενέργειας για τον μήνα i
+        excess_energy_i = (f_new(i) - 1) * L(i);
+        
+        % Μετατροπή υπερπαραγωγής ενέργειας σε όγκο νερού
+        % Q = V * p * Cp * ΔT => V = Q / (p * Cp * ΔT)
+        % ΔT = Tznx - Tk(i) για τον μήνα i
+        excess_water_volume(i) = excess_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
+    end
+end
+
+% Συνολική υπερπαραγωγή όγκου νερού
+total_excess_water = sum(excess_water_volume);
+
+fprintf('\nΥπερπαραγωγή όγκου νερού ανά μήνα:\n');
+for i = 1:12
+    if excess_water_volume(i) > 0
+        fprintf('Μήνας %d: %.2f λίτρα (Tk = %.1f°C)\n', i, excess_water_volume(i), Tk(i));
+    end
+end
+
+fprintf('\nΣυνολική υπερπαραγωγή όγκου ζεστού νερού: %.2f λίτρα\n', total_excess_water);
+months_with_excess = find(f_new > 1);
+
+fprintf('\nΜήνες με υπερπαραγωγή (f > 1):\n');
+for i = 1:length(months_with_excess)
+    month_idx = months_with_excess(i);
+    fprintf('Μήνας %d: f = %.4f\n', month_idx, f_new(month_idx));
+end
+
+% Βήμα 2: Υπολογισμός συνολικής υπερπαραγωγής ζεστού νερού
+excess_energy_total = zeros(1, 12);
+for i = 1:12
+    if f_new(i) > 1
+        excess_energy_total(i) = (f_new(i) - 1) * L(i);
+    end
+end
+
+% Συνολική υπερπαραγωγή
+total_excess = sum(excess_energy_total);
+
+fprintf('\nΣυνολική υπερπαραγωγή ζεστού νερού: %.2f kWh\n', total_excess);
+fprintf('Ενεργειακές ανάγκες Ιανουαρίου: %.2f kWh\n', L(1));
+fprintf('Ποσοστό κάλυψης Ιανουαρίου από υπερπαραγωγή: %.2f%%\n', (total_excess/L(1))*100);
+
+
+%%%%%%% Βήμα 2: Υπολογισμός ελ
 
 
 
