@@ -317,3 +317,43 @@ end
 
 
 
+$$$ απο εδώ και κάτω το πείραμα έχει αποτύχει μπορώ να το δω πιο μετά αν θέλω
+
+
+% Υπολογισμός όγκου νερού που παρέχεται από ηλιακά κάθε μήνα
+water_volume_from_solar = zeros(1, 12);
+for i = 1:12
+    % Ενέργεια από ηλιακά για τον μήνα i
+    energy_from_solar = min(f_new(i), 1) * L(i);
+    
+    % Μετατροπή ενέργειας σε όγκο νερού
+    % Q = V * p * Cp * ΔT => V = Q / (p * Cp * ΔT)
+    water_volume_from_solar(i) = energy_from_solar / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
+end
+
+% Υπολογισμός όγκου νερού από διεποχιακή αποθήκευση για Ιανουάριο
+water_from_storage_january = 0;
+if remaining_excess_energy > 0
+    water_from_storage_january = remaining_excess_energy / (p * Cp * (Tznx - Tk(1))) * 1000; % σε λίτρα
+elseif total_excess > 0
+    water_from_storage_january = total_excess / (p * Cp * (Tznx - Tk(1))) * 1000; % σε λίτρα
+end
+
+% Δημιουργία γραφήματος
+figure;
+bar(1:12, water_volume_from_solar, 'FaceColor', [0.2 0.6 0.8]);
+hold on;
+
+% Προσθήκη δεύτερης μπάρας για Ιανουάριο (διεποχιακή αποθήκευση)
+bar(1, water_from_storage_january, 'FaceColor', [0.9 0.4 0.2], 'BarWidth', 0.5);
+
+hold off;
+
+% Προσθήκη ετικετών και τίτλου
+xlabel('Μήνας');
+ylabel('Όγκος Νερού (λίτρα)');
+title('Όγκος Νερού από Ηλιακά και Διεποχιακή Αποθήκευση ανά Μήνα');
+legend('Όγκος από Ηλιακά', 'Όγκος από Διεποχιακή Αποθήκευση (Ιανουάριος)', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
