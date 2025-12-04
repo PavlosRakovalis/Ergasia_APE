@@ -140,18 +140,39 @@ for Ac_new = 0:0.25:Ac_new_max
         continue
     end
 
-    % Υπολογισμός περίσσειας ενέργειας για όλους τους μήνες με f_new > 1
-    excess_energy = (f_new - 1) .* L;
-    excess_energy(f_new <= 1) = 0;  % Μηδενισμός για μήνες χωρίς υπερπαραγωγή
-    Qsummer_excess = sum(excess_energy);
-    Qdecember = L(12);
+    % Υπολογισμός όγκου νερού με τον ίδιο τρόπο όπως στο Ερώτημα 5
+    temp_total_water = zeros(1, 12);
+    temp_required_water = zeros(1, 12);
+    excess_water = zeros(1, 12);
     
-    % Έλεγχος αν καλύπτεται η ζήτηση του Δεκεμβρίου
-    if Qsummer_excess >= Qdecember
-        Ac_new_found = Ac_new
+    for i = 1:12
+        % Υπολογισμός συνολικής παραγωγής ενέργειας για τον μήνα i
+        total_energy_i = f_new(i) * L(i);
+        
+        % Μετατροπή παραγωγής ενέργειας σε όγκο νερού
+        temp_total_water(i) = total_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
+        
+        % Υπολογισμός απαιτούμενου όγκου νερού
+        temp_required_water(i) = N(i) * HKznx; % λίτρα
+        
+        % Υπολογισμός υπερπαραγωγής όγκου νερού
+        excess_water(i) = max(0, temp_total_water(i) - temp_required_water(i));
+    end
+    
+    % Συνολική περίσσεια όγκου νερού από όλους τους μήνες
+    total_excess_water_volume = sum(excess_water);
+    
+    % Απαιτούμενος όγκος νερού για τον Δεκέμβριο
+    Vdecember_required = N(12) * HKznx; % λίτρα
+    
+    % Έλεγχος αν η περίσσεια νερού καλύπτει τις ανάγκες του Δεκεμβρίου
+    if total_excess_water_volume >= Vdecember_required
+        Ac_new_found = Ac_new;
         break
     end
 end
+
+
 
 % Υπολογισμός ενέργειας που παράγεται από το ηλιακό σύστημα κάθε μήνα
 Q_solar = f_new .* L;  % Ενέργεια που παράγει το ηλιακό σύστημα
@@ -211,9 +232,7 @@ ylim([0 max(f_new_plot)*1.1]);
 %
 % Αλλαγές:
 %   1) Οι μήνες από τους οποίους παίρνουμε υπερπαραγωγή ενέργειας (f > 1) 
-%      θα χρησιμοποιηθούν για την κάλυψη μέρος των αναγκών του μήνα Ιανουαρίου 
-%      ο οποίος έχει την χαμηλότερη θερμοκρασία νερού δικτύου και άρα μας 
-%      συμφέρει περισσότερο η χρήση του ζεστού καλοκαιρινού νερού εκεί
+%      θα χρησιμοποιηθούν για την κάλυψη των αναγκών των υπόλοιπων μηνών.
 %
 %   2) Το 1 συνεπάγεται ότι θα αλλάξει και ο όγκος της δεξαμενής 
 %      διεποχιακής αποθήκευσης
@@ -224,128 +243,51 @@ ylim([0 max(f_new_plot)*1.1]);
 
 % Βήμα 1: Εντοπισμός μηνών με f > 1 και υπολογισμός υπερπαραγωγής νερού
 excess_water_volume = zeros(1, 12);
+total_created_water_volume_by_sollars = zeros(1, 12);
+required_water_volume = zeros(1, 12);
+
 for i = 1:12
-    if f_new(i) > 1
-        % Υπολογισμός υπερπαραγωγής ενέργειας για τον μήνα i
-        excess_energy_i = (f_new(i) - 1) * L(i);
-        
-        % Μετατροπή υπερπαραγωγής ενέργειας σε όγκο νερού
-        % Q = V * p * Cp * ΔT => V = Q / (p * Cp * ΔT)
-        % ΔT = Tznx - Tk(i) για τον μήνα i
-        excess_water_volume(i) = excess_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
-    end
+    % Υπολογισμός συνολικής παραγωγής ενέργειας για τον μήνα i
+    total_energy_i = f_new(i) * L(i);
+    
+    % Μετατροπή παραγωγής ενέργειας σε όγκο νερού
+    % Q = V * p * Cp * ΔT => V = Q / (p * Cp * ΔT)
+    total_created_water_volume_by_sollars(i) = total_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
+    
+    % Υπολογισμός απαιτούμενου όγκου νερού
+    required_water_volume(i) = N(i) * HKznx; % λίτρα
+    
+    % Υπολογισμός υπερπαραγωγής όγκου νερού
+    excess_water_volume(i) = max(0, total_created_water_volume_by_sollars(i) - required_water_volume(i));
 end
+
+total_created_water_volume_by_sollars(12) = 0; % Ο Δεκέμβριος δεν παράγει ζεστό νερό από ηλιακά
 
 % Συνολική υπερπαραγωγή όγκου νερού
 total_excess_water = sum(excess_water_volume);
-
-fprintf('\nΥπερπαραγωγή όγκου νερού ανά μήνα:\n');
-for i = 1:12
-    if excess_water_volume(i) > 0
-        fprintf('Μήνας %d: %.2f λίτρα (Tk = %.1f°C)\n', i, excess_water_volume(i), Tk(i));
-    end
-end
-
 fprintf('\nΣυνολική υπερπαραγωγή όγκου ζεστού νερού: %.2f λίτρα\n', total_excess_water);
-months_with_excess = find(f_new > 1);
-
-fprintf('\nΜήνες με υπερπαραγωγή (f > 1):\n');
-for i = 1:length(months_with_excess)
-    month_idx = months_with_excess(i);
-    fprintf('Μήνας %d: f = %.4f\n', month_idx, f_new(month_idx));
-end
-
-% Βήμα 2: Υπολογισμός συνολικής υπερπαραγωγής ζεστού νερού
-excess_energy_total = zeros(1, 12);
-for i = 1:12
-    if f_new(i) > 1
-        excess_energy_total(i) = (f_new(i) - 1) * L(i);
-    end
-end
-
-% Συνολική υπερπαραγωγή
-total_excess = sum(excess_energy_total);
-
-fprintf('\nΣυνολική υπερπαραγωγή ζεστού νερού: %.2f kWh\n', total_excess);
-fprintf('Ενεργειακές ανάγκες Ιανουαρίου: %.2f kWh\n', L(1));
-fprintf('Ποσοστό κάλυψης Ιανουαρίου από υπερπαραγωγή: %.2f%%\n', (total_excess/L(1))*100);
-
-
-%%%%%%% Βήμα 2: Υπολογισμός όγκου νερού που περισσεύει μετά την κάλυψη των αναγκών του Δεκεμβρίου 
-% και υπολογισμός του ποσού του διοξειδίου του άνθρακα που θα εξοικονομήσουμε 
 
 
 
 
 
+%%%%%%%%%%%%% Διάγραμμα λιτρων %%%%%%%%%%%%%%%%
 
-% Από εδώ και κάτω πρέπει να ελεγχθούν
+% Προετοιμασία δεδομένων για stacked bar chart
+normal_volume = min(total_created_water_volume_by_sollars, required_water_volume);
+excess_volume = max(total_created_water_volume_by_sollars - required_water_volume, 0);
 
-% Υπολογισμός αρχικών αναγκών Ιανουαρίου (χωρίς ηλιακή παραγωγή)
-Q_solar_january = f_new(1) * L(1);  % Ενέργεια από ηλιακά τον Ιανουάριο
-L_january_without_solar = L(1) - Q_solar_january;  % Αρχικές ανάγκες μείον ηλιακή παραγωγή
-
-remaining_excess_energy = total_excess - L_january_without_solar;
-
-% Έλεγχος αν η υπερπαραγωγή καλύπτει τις αρχικές ανάγκες του Ιανουαρίου (πλην ηλιακών)
-if total_excess >= L_january_without_solar
-    fprintf('\nΗ υπερπαραγωγή καλύπτει πλήρως τις ανάγκες του Ιανουαρίου (πλην ηλιακής παραγωγής του μήνα).\n');
-    fprintf('Συνολικές ανάγκες Ιανουαρίου: %.2f kWh\n', L(1));
-    fprintf('Ηλιακή παραγωγή Ιανουαρίου: %.2f kWh\n', Q_solar_january);
-    fprintf('Ανάγκες προς κάλυψη από υπερπαραγωγή: %.2f kWh\n', L_january_without_solar);
-    fprintf('Περίσσεια ενέργειας μετά την κάλυψη Ιανουαρίου: %.2f kWh\n', remaining_excess_energy);
-    
-    % Υπολογισμός εξοικονόμησης CO2 από την κάλυψη Ιανουαρίου
-    E_fuel_saved = L_january_without_solar / h_boiler;
-    CO2_saved_january = EF_CO2 * E_fuel_saved;
-    fprintf('Εξοικονόμηση CO2 από κάλυψη Ιανουαρίου: %.2f kg CO2\n', CO2_saved_january);
-else
-    fprintf('\nΗ υπερπαραγωγή ΔΕΝ καλύπτει πλήρως τις ανάγκες του Ιανουαρίου.\n');
-    fprintf('Συνολικές ανάγκες Ιανουαρίου: %.2f kWh\n', L(1));
-    fprintf('Ηλιακή παραγωγή Ιανουαρίου: %.2f kWh\n', Q_solar_january);
-    fprintf('Ανάγκες προς κάλυψη από υπερπαραγωγή: %.2f kWh\n', L_january_without_solar);
-    fprintf('Διαθέσιμη υπερπαραγωγή: %.2f kWh\n', total_excess);
-    fprintf('Έλλειμμα που πρέπει να καλυφθεί από συμβατικές πηγές: %.2f kWh\n', L_january_without_solar - total_excess);
-    
-    % Υπολογισμός εξοικονόμησης CO2 από τη διαθέσιμη υπερπαραγωγή
-    E_fuel_saved = total_excess / h_boiler;
-    CO2_saved_january = EF_CO2 * E_fuel_saved;
-    fprintf('Εξοικονόμηση CO2 από διαθέσιμη υπερπαραγωγή: %.2f kg CO2\n', CO2_saved_january);
-    
-    remaining_excess_energy = 0;
-end
-
-
-
-$$$ απο εδώ και κάτω το πείραμα έχει αποτύχει μπορώ να το δω πιο μετά αν θέλω
-
-
-% Υπολογισμός όγκου νερού που παρέχεται από ηλιακά κάθε μήνα
-water_volume_from_solar = zeros(1, 12);
-for i = 1:12
-    % Ενέργεια από ηλιακά για τον μήνα i
-    energy_from_solar = min(f_new(i), 1) * L(i);
-    
-    % Μετατροπή ενέργειας σε όγκο νερού
-    % Q = V * p * Cp * ΔT => V = Q / (p * Cp * ΔT)
-    water_volume_from_solar(i) = energy_from_solar / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
-end
-
-% Υπολογισμός όγκου νερού από διεποχιακή αποθήκευση για Ιανουάριο
-water_from_storage_january = 0;
-if remaining_excess_energy > 0
-    water_from_storage_january = remaining_excess_energy / (p * Cp * (Tznx - Tk(1))) * 1000; % σε λίτρα
-elseif total_excess > 0
-    water_from_storage_january = total_excess / (p * Cp * (Tznx - Tk(1))) * 1000; % σε λίτρα
-end
-
-% Δημιουργία γραφήματος
+% Δημιουργία γραφήματος με stacked bars
 figure;
-bar(1:12, water_volume_from_solar, 'FaceColor', [0.2 0.6 0.8]);
+b = bar(1:12, [normal_volume; excess_volume]', 'stacked');
+b(1).FaceColor = [0.2 0.6 0.8]; % Μπλε για κανονική παραγωγή
+b(2).FaceColor = [0.2 0.8 0.4]; % Πράσινο για υπερπαραγωγή
 hold on;
 
-% Προσθήκη δεύτερης μπάρας για Ιανουάριο (διεποχιακή αποθήκευση)
-bar(1, water_from_storage_january, 'FaceColor', [0.9 0.4 0.2], 'BarWidth', 0.5);
+% Προσθήκη οριζόντιων διακεκομμένων γραμμών για την απαιτούμενη ποσότητα νερού κάθε μήνα
+for i = 1:12
+    plot([i-0.4, i+0.4], [required_water_volume(i), required_water_volume(i)], 'r--', 'LineWidth', 1.5);
+end
 
 hold off;
 
@@ -353,7 +295,295 @@ hold off;
 xlabel('Μήνας');
 ylabel('Όγκος Νερού (λίτρα)');
 title('Όγκος Νερού από Ηλιακά και Διεποχιακή Αποθήκευση ανά Μήνα');
-legend('Όγκος από Ηλιακά', 'Όγκος από Διεποχιακή Αποθήκευση (Ιανουάριος)', 'Location', 'best');
+legend('Όγκος ΖΝΧ από Ηλιακά', 'Υπερπαραγωγή όγκου ΖΝΧ από Ηλιακά', 'Απαιτούμενος όγκος νερού', 'Location', 'best');
 grid on;
 set(gca, 'XTick', 1:12);
 set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+
+
+% Υπολογισμός ελλείμματος νερού για κάθε μήνα
+deficit_water_volume = zeros(1, 12);
+for i = 1:12
+    deficit_water_volume(i) = max(0, required_water_volume(i) - total_created_water_volume_by_sollars(i));
+end
+
+% Υπολογισμός νερού που χρησιμοποιείται από διεποχιακή δεξαμενή ανά μήνα
+water_used_from_seasonal_tank_per_month = zeros(1, 12);
+remaining_seasonal_water = total_excess_water;
+
+% Ξεκινάμε από τον Δεκέμβριο (μήνας 12)
+if deficit_water_volume(12) > 0 && remaining_seasonal_water > 0
+    water_used_from_seasonal_tank_per_month(12) = min(deficit_water_volume(12), remaining_seasonal_water);
+    remaining_seasonal_water = remaining_seasonal_water - water_used_from_seasonal_tank_per_month(12);
+end
+
+% Συνεχίζουμε από τον Ιούνιο μέχρι τον Νοέμβριο (6:11)
+for i = 6:11
+    if remaining_seasonal_water <= 0
+        break;
+    end
+    
+    if deficit_water_volume(i) > 0
+        water_used_from_seasonal_tank_per_month(i) = min(deficit_water_volume(i), remaining_seasonal_water);
+        remaining_seasonal_water = remaining_seasonal_water - water_used_from_seasonal_tank_per_month(i);
+    end
+end
+
+% Τέλος από τον Ιανουάριο μέχρι τον Μάιο (1:5)
+for i = 1:5
+    if remaining_seasonal_water <= 0
+        break;
+    end
+    
+    if deficit_water_volume(i) > 0
+        water_used_from_seasonal_tank_per_month(i) = min(deficit_water_volume(i), remaining_seasonal_water);
+        remaining_seasonal_water = remaining_seasonal_water - water_used_from_seasonal_tank_per_month(i);
+    end
+end
+
+
+fprintf('\n=== Έλεγχος Διεποχιακής Αποθήκευσης ===\n');
+fprintf('Συνολική υπερπαραγωγή (total_excess_water): %.2f λίτρα\n', total_excess_water);
+fprintf('Άθροισμα χρησιμοποιούμενου νερού: %.2f λίτρα\n', sum(water_used_from_seasonal_tank_per_month));
+fprintf('Υπόλοιπο νερό στη δεξαμενή: %.2f λίτρα\n', remaining_seasonal_water);
+
+if sum(water_used_from_seasonal_tank_per_month) > total_excess_water
+    fprintf('⚠️ ΠΡΟΒΛΗΜΑ: Χρησιμοποιήθηκε περισσότερο νερό από το διαθέσιμο!\n');
+else
+    fprintf('✓ OK: Το χρησιμοποιούμενο νερό είναι μικρότερο ή ίσο με το διαθέσιμο\n');
+end
+fprintf('=====================================\n\n');
+
+
+%%%%%%%%%%%%% Διάγραμμα λιτρων %%%%%%%%%%%%%%%%
+
+% Προετοιμασία δεδομένων για stacked bar chart
+normal_volume = min(total_created_water_volume_by_sollars, required_water_volume);
+excess_volume = max(total_created_water_volume_by_sollars - required_water_volume, 0);
+
+% Δημιουργία γραφήματος με stacked bars (3 στοίβες)
+figure;
+b = bar(1:12, [normal_volume; excess_volume; water_used_from_seasonal_tank_per_month]', 'stacked');
+b(1).FaceColor = [0.2 0.6 0.8]; % Μπλε για κανονική παραγωγή από ηλιακά
+b(2).FaceColor = [0.2 0.8 0.4]; % Πράσινο για υπερπαραγωγή από ηλιακά
+b(3).FaceColor = [1.0 0.6 0.0]; % Πορτοκαλί για νερό από διεποχιακή δεξαμενή
+hold on;
+
+% Προσθήκη οριζόντιων διακεκομμένων γραμμών για την απαιτούμενη ποσότητα νερού κάθε μήνα
+for i = 1:12
+    plot([i-0.4, i+0.4], [required_water_volume(i), required_water_volume(i)], 'r--', 'LineWidth', 1.5);
+end
+
+hold off;
+
+% Προσθήκη ετικετών και τίτλου
+xlabel('Μήνας');
+ylabel('Όγκος Νερού (λίτρα)');
+title('Όγκος Νερού από Ηλιακά και Διεποχιακή Αποθήκευση ανά Μήνα');
+legend('Όγκος ΖΝΧ από Ηλιακά', 'Υπερπαραγωγή όγκου ΖΝΧ από Ηλιακά', 'ΖΝΧ από Διεποχιακή Δεξαμενή', 'Απαιτούμενος όγκος νερού', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Υπολογισμός νέου Ac για καλυψη για όλο τον χρόνο απο την δεξαμενη%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fprintf('\n=== ΠΡΙΝ ΤΟ ΕΡΩΤΗΜΑ 5 ===\n');
+fprintf('Επιφάνεια Συλλεκτών: %.2f m²\n', Ac_new_found);
+fprintf('Μέγεθος Δεξαμενής Διεποχιακής Αποθήκευσης: %.2f λίτρα\n', Vtank);
+fprintf('========================\n\n');
+
+
+
+
+
+% Αρχικοποίηση αναζήτησης
+Ac_new_max = 1e6;
+
+Ac_new_found = NaN;
+
+for Ac_new = 0:0.25:Ac_new_max
+   
+     X_new = (Ac_new./L).*FR_mult_Ul.*FRdot_div_FR.*(Tanaf - Ta).*dt.*k1.*k2;
+
+     Y_new = (Ac_new./L).*FR_mult_tan.*FRdot_div_FR.*ta_div_tan.*Hb.*k3;
+
+     f_new = 1.029*Y_new - 0.065*X_new - 0.245.*(Y_new.^2) + 0.0018.*(X_new.^2) + 0.0215.*(Y_new.^3);
+     
+     % Υπολογισμός υπερπαραγωγής και ελλείμματος όγκου νερού για κάθε μήνα
+     temp_excess_water_volume = zeros(1, 12);
+     temp_deficit_water_volume = zeros(1, 12);
+     temp_total_created_water = zeros(1, 12);
+     temp_required_water = zeros(1, 12);
+     
+     for i = 1:12
+         % Υπολογισμός συνολικής παραγωγής ενέργειας για τον μήνα i
+         total_energy_i = f_new(i) * L(i);
+         
+         % Μετατροπή παραγωγής ενέργειας σε όγκο νερού
+         temp_total_created_water(i) = total_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000; % σε λίτρα
+         
+         % Υπολογισμός απαιτούμενου όγκου νερού
+         temp_required_water(i) = N(i) * HKznx; % λίτρα
+         
+         % Υπολογισμός υπερπαραγωγής και ελλείμματος
+         temp_excess_water_volume(i) = max(0, temp_total_created_water(i) - temp_required_water(i));
+         temp_deficit_water_volume(i) = max(0, temp_required_water(i) - temp_total_created_water(i));
+     end
+     
+     temp_total_created_water(12) = 0; % Ο Δεκέμβριος δεν παράγει ζεστό νερό από ηλιακά
+     temp_excess_water_volume(12) = 0;
+     temp_deficit_water_volume(12) = temp_required_water(12);
+     
+     % Συνολική υπερπαραγωγή όγκου νερού (διαθέσιμο για διεποχιακή αποθήκευση)
+     total_excess_water_volume = sum(temp_excess_water_volume);
+     
+     % Συνολικό έλλειμμα όγκου νερού (απαιτούμενο από διεποχιακή αποθήκευση)
+     total_deficit_water_volume = sum(temp_deficit_water_volume);
+     
+     % Έλεγχος αν η περίσσεια νερού καλύπτει όλα τα ελλείμματα του χρόνου
+     if total_excess_water_volume >= total_deficit_water_volume
+         Ac_new_found = Ac_new;
+         break
+     end
+end
+
+% Υπολογισμός του νέου όγκου δεξαμενής διεποχιακής αποθήκευσης
+Vtank_new = sum(excess_water_volume);
+
+fprintf('\n=== ΜΕΤΑ ΤΟ ΕΡΩΤΗΜΑ 5 ===\n');
+fprintf('Νέα Επιφάνεια Συλλεκτών: %.2f m²\n', Ac_new_found);
+fprintf('Νέο Μέγεθος Δεξαμενής Διεποχιακής Αποθήκευσης: %.2f λίτρα\n', Vtank_new);
+fprintf('=========================\n\n');
+
+% Υπολογισμός για τα τελικά διαγράμματα με το νέο Ac
+X_final = (Ac_new_found./L).*FR_mult_Ul.*FRdot_div_FR.*(Tanaf - Ta).*dt.*k1.*k2;
+Y_final = (Ac_new_found./L).*FR_mult_tan.*FRdot_div_FR.*ta_div_tan.*Hb.*k3;
+f_final = 1.029*Y_final - 0.065*X_final - 0.245.*(Y_final.^2) + 0.0018.*(X_final.^2) + 0.0215.*(Y_final.^3);
+
+% Υπολογισμός ενέργειας που παράγεται από το ηλιακό σύστημα κάθε μήνα
+Q_solar_final = f_final .* L;  % Ενέργεια που παράγει το ηλιακό σύστημα
+
+% Διάγραμμα 1: Ενέργεια ηλιακού συστήματος vs ενεργειακές ανάγκες
+figure;
+bar(1:12, Q_solar_final);
+hold on;
+plot(1:12, L, 'r--o', 'LineWidth', 2, 'MarkerSize', 6);
+hold off;
+xlabel('Μήνας');
+ylabel('Ενέργεια (kWh)');
+title('Ενέργεια Ηλιακού Συστήματος vs Ενεργειακές Ανάγκες ανά Μήνα (Νέο Ac)');
+legend('Ενέργεια Ηλιακού Συστήματος', 'Ενεργειακές Ανάγκες', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+% Διάγραμμα 2: Παράγοντας f ανά μήνα
+figure;
+bar(1:12, f_final);
+hold on;
+yline(1, 'r--', 'LineWidth', 2);
+hold off;
+xlabel('Μήνας');
+ylabel('Παράγοντας f');
+title('Παράγοντας f ανά Μήνα (Νέο Ac)');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+ylim([0 max(f_final)*1.1]);
+
+% Υπολογισμός όγκων νερού για διαγράμματα 3 και 4
+final_total_water = zeros(1, 12);
+final_required_water = zeros(1, 12);
+final_excess_water = zeros(1, 12);
+final_deficit_water = zeros(1, 12);
+
+for i = 1:12
+    total_energy_i = f_final(i) * L(i);
+    final_total_water(i) = total_energy_i / (p * Cp * (Tznx - Tk(i))) * 1000;
+    final_required_water(i) = N(i) * HKznx;
+    final_excess_water(i) = max(0, final_total_water(i) - final_required_water(i));
+    final_deficit_water(i) = max(0, final_required_water(i) - final_total_water(i));
+end
+
+% Διάγραμμα 3: Όγκος νερού χωρίς διεποχιακή αποθήκευση
+normal_vol = min(final_total_water, final_required_water);
+excess_vol = max(final_total_water - final_required_water, 0);
+
+figure;
+b = bar(1:12, [normal_vol; excess_vol]', 'stacked');
+b(1).FaceColor = [0.2 0.6 0.8];
+b(2).FaceColor = [0.2 0.8 0.4];
+hold on;
+for i = 1:12
+    plot([i-0.4, i+0.4], [final_required_water(i), final_required_water(i)], 'r--', 'LineWidth', 1.5);
+end
+hold off;
+xlabel('Μήνας');
+ylabel('Όγκος Νερού (λίτρα)');
+title('Όγκος Νερού από Ηλιακά ανά Μήνα (Νέο Ac)');
+legend('Όγκος ΖΝΧ από Ηλιακά', 'Υπερπαραγωγή όγκου ΖΝΧ', 'Απαιτούμενος όγκος', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+% Υπολογισμός διανομής από διεποχιακή δεξαμενή
+final_seasonal_water = zeros(1, 12);
+remaining = sum(final_excess_water);
+
+for i = 1:12
+    if remaining <= 0
+        break;
+    end
+    if final_deficit_water(i) > 0
+        final_seasonal_water(i) = min(final_deficit_water(i), remaining);
+        remaining = remaining - final_seasonal_water(i);
+    end
+end
+
+% Διάγραμμα 4: Όγκος νερού με διεποχιακή αποθήκευση
+figure;
+b = bar(1:12, [normal_vol; excess_vol; final_seasonal_water]', 'stacked');
+b(1).FaceColor = [0.2 0.6 0.8];
+b(2).FaceColor = [0.2 0.8 0.4];
+b(3).FaceColor = [1.0 0.6 0.0];
+hold on;
+for i = 1:12
+    plot([i-0.4, i+0.4], [final_required_water(i), final_required_water(i)], 'r--', 'LineWidth', 1.5);
+end
+hold off;
+xlabel('Μήνας');
+ylabel('Όγκος Νερού (λίτρα)');
+title('Όγκος Νερού με Διεποχιακή Αποθήκευση (Νέο Ac)');
+legend('Όγκος ΖΝΧ από Ηλιακά', 'Υπερπαραγωγή', 'ΖΝΧ από Διεποχιακή Δεξαμενή', 'Απαιτούμενος όγκος', 'Location', 'best');
+grid on;
+set(gca, 'XTick', 1:12);
+set(gca, 'XTickLabel', {'Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαι', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
