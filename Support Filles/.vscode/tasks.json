@@ -4,13 +4,7 @@
     {
       "label": "Build LaTeX (XeLaTeX)",
       "type": "shell",
-      "command": "xelatex",
-      "args": [
-        "-shell-escape",
-        "-interaction=nonstopmode",
-        "-synctex=1",
-        "${file}"
-      ],
+      "command": "mkdir -p build && xelatex -interaction=nonstopmode -synctex=1 -output-directory=build \"${file}\" && cp build/*.pdf .",
       "options": {
         "cwd": "${fileDirname}"
       },
@@ -27,7 +21,7 @@
     {
       "label": "Build LaTeX twice (XeLaTeX)",
       "type": "shell",
-      "command": "xelatex -shell-escape -interaction=nonstopmode -synctex=1 \"${file}\" && xelatex -shell-escape -interaction=nonstopmode -synctex=1 \"${file}\"",
+      "command": "mkdir -p build && xelatex -interaction=nonstopmode -synctex=1 -output-directory=build \"${file}\" && xelatex -interaction=nonstopmode -synctex=1 -output-directory=build \"${file}\" && cp build/*.pdf .",
       "options": {
         "cwd": "${fileDirname}"
       },
@@ -41,7 +35,7 @@
     {
       "label": "Clean LaTeX auxiliary files",
       "type": "shell",
-      "command": "rm -f *.aux *.log *.out *.toc *.lof *.lot *.fls *.fdb_latexmk *.synctex.gz",
+      "command": "rm -rf build",
       "options": {
         "cwd": "${fileDirname}"
       },

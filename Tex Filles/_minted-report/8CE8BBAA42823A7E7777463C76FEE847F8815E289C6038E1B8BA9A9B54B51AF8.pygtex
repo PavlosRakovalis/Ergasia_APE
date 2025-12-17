@@ -1,0 +1,117 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c}{\PYGZpc{} Πλήρες script: ape\PYGZus{}ergasia\PYGZus{}1.m}
+\PYG{n+nb}{clc}
+\PYG{n+nb}{clear}
+\PYG{n+nb}{close}\PYG{+w}{ }\PYG{n+nb}{all}
+
+\PYG{c}{\PYGZpc{} AEM:6930}
+
+\PYG{n}{Tanaf}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{p}{;}\PYG{+w}{  }\PYG{c}{\PYGZpc{}Celsius}
+\PYG{n}{Tznx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{45}\PYG{p}{;}
+\PYG{n}{Tk}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{  }\PYG{l+m+mf}{6.6}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}  \PYGZdq{}θερμοκρασία νερού δικτύου\PYGZdq{} πίνακας 2.6}
+\PYG{n}{Ta}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{5.1}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} Celsius \PYGZdq{}Μέση μινιαία θερμοκρασία κατα τη διάρκεια της ημέρας (Κοζάνη πίνακας 3.2 , Δεκέμβρης) \PYGZdq{}}
+\PYG{n}{FR\PYGZus{}mult\PYGZus{}Ul}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.7}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} πινακας 5.10 (η0)}
+\PYG{n}{FR\PYGZus{}mult\PYGZus{}tan}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.8}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} πινακας 5.10 (α1)}
+\PYG{n}{FRdot\PYGZus{}div\PYGZus{}FR}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.95}\PYG{p}{;}\PYG{+w}{  }\PYG{c}{\PYGZpc{}FR\PYGZsq{}/FR}
+\PYG{n}{ta\PYGZus{}div\PYGZus{}tan}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.99}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}τα/ταn}
+\PYG{n}{k1}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}έστω Μ = 75 ;}
+\PYG{n}{k3}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}
+\PYG{n}{Ta\PYGZus{}dot}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{3.9}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} πίνακας 3.1 Μέση Μινιαία θερμοκρασία περιβάλλοντος\PYGZdq{}}
+\PYG{n}{k2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mf}{11.6}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{1.18}\PYG{o}{*}\PYG{n}{Tznx}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{3.86}\PYG{o}{*}\PYG{n}{Tk}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{2.32}\PYG{o}{*}\PYG{n}{Ta\PYGZus{}dot}\PYG{p}{)}\PYG{o}{/}\PYG{p}{(}\PYG{l+m+mi}{100}\PYG{o}{\PYGZhy{}}\PYG{n}{Ta\PYGZus{}dot}\PYG{p}{);}
+\PYG{n}{p}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1000}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}kg/m\PYGZca{}3}
+\PYG{n}{HKznx}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{80}\PYG{o}{*}\PYG{l+m+mi}{300}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} \PYGZdq{}Μέση ημερήσια κατανάλωση ζεστού νερού\PYGZdq{} , πίνακας 2.5, αρ. κλινών = 300}
+\PYG{n}{Cp}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{4180}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} J/kg*K}
+
+\PYG{n}{dt}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{2678400}\PYG{+w}{ }\PYG{l+m+mi}{2419200}\PYG{+w}{ }\PYG{l+m+mi}{2678400}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2678400}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2678400}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2592000}\PYG{+w}{ }\PYG{l+m+mi}{2678400}\PYG{p}{];}
+
+\PYG{n}{N}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{28}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{30}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{30}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{30}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{+w}{ }\PYG{l+m+mi}{30}\PYG{+w}{ }\PYG{l+m+mi}{31}\PYG{p}{]}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}αριθμός ημερών κάθε μήνα}
+
+\PYG{n}{Hb}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mi}{51}\PYG{+w}{ }\PYG{l+m+mi}{68}\PYG{+w}{ }\PYG{l+m+mi}{106}\PYG{+w}{ }\PYG{l+m+mi}{141}\PYG{+w}{ }\PYG{l+m+mi}{181}\PYG{+w}{ }\PYG{l+m+mi}{203}\PYG{+w}{ }\PYG{l+m+mi}{210}\PYG{+w}{ }\PYG{l+m+mi}{188}\PYG{+w}{ }\PYG{l+m+mi}{141}\PYG{+w}{ }\PYG{l+m+mi}{95}\PYG{+w}{ }\PYG{l+m+mi}{57}\PYG{+w}{ }\PYG{l+m+mi}{44}\PYG{p}{]}\PYG{o}{*}\PYG{l+m+mi}{3600}\PYG{o}{*}\PYG{l+m+mi}{10}\PYG{o}{\PYGZca{}}\PYG{l+m+mi}{3}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}Μέση μινιαία ηλιακή ακτινοβολία, \PYGZdq{}Σέρρες , σελ.70\PYGZdq{}}
+
+\PYG{n}{hls}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{12.1}\PYG{o}{/}\PYG{l+m+mi}{100}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{}\PYGZdq{}ποσοστό απωλειών κεντρικού δικτύου διανομής\PYGZdq{}, μόνωση κτηρίου αναφοράς, με ανακυκλοφορία, σελ30 οδηγίες}
+
+\PYG{n}{L}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{N}\PYG{o}{*}\PYG{n}{HKznx}\PYG{o}{*}\PYG{n}{p}\PYG{o}{*}\PYG{n}{Cp}\PYG{o}{*}\PYG{p}{(}\PYG{n}{Tznx}\PYG{o}{\PYGZhy{}}\PYG{n}{Tk}\PYG{p}{)}\PYG{o}{/}\PYG{n}{hls}\PYG{p}{)}\PYG{o}{*}\PYG{l+m+mi}{10}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{     }\PYG{n}{Lsum}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{sum}\PYG{p}{(}\PYG{n}{L}\PYG{p}{);}
+
+\PYG{c}{\PYGZpc{} Αρχικοποίηση αναζήτησης}
+\PYG{n}{Ac\PYGZus{}max}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{1e6}\PYG{p}{;}
+
+\PYG{n}{Ac\PYGZus{}found}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{NaN}\PYG{p}{;}
+
+\PYG{c}{\PYGZpc{} \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c}{\PYGZpc{} erwtimama 1}
+
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{Ac}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{:}\PYG{n}{Ac\PYGZus{}max}
+
+\PYG{+w}{     }\PYG{n}{X}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Ac}\PYG{o}{./}\PYG{n}{L}\PYG{p}{)}\PYG{o}{.*}\PYG{n}{FR\PYGZus{}mult\PYGZus{}Ul}\PYG{o}{.*}\PYG{n}{FRdot\PYGZus{}div\PYGZus{}FR}\PYG{o}{.*}\PYG{p}{(}\PYG{n}{Tanaf}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{Ta}\PYG{p}{)}\PYG{o}{.*}\PYG{n}{dt}\PYG{o}{.*}\PYG{n}{k1}\PYG{o}{.*}\PYG{n}{k2}\PYG{p}{;}
+
+\PYG{+w}{     }\PYG{n}{Y}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Ac}\PYG{o}{./}\PYG{n}{L}\PYG{p}{)}\PYG{o}{.*}\PYG{n}{FR\PYGZus{}mult\PYGZus{}tan}\PYG{o}{.*}\PYG{n}{FRdot\PYGZus{}div\PYGZus{}FR}\PYG{o}{.*}\PYG{n}{ta\PYGZus{}div\PYGZus{}tan}\PYG{o}{.*}\PYG{n}{Hb}\PYG{o}{.*}\PYG{n}{k3}\PYG{p}{;}
+
+\PYG{+w}{     }\PYG{n}{f}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.029}\PYG{o}{*}\PYG{n}{Y}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.065}\PYG{o}{*}\PYG{n}{X}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.245}\PYG{o}{.*}\PYG{p}{(}\PYG{n}{Y}\PYG{o}{.\PYGZca{}}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.0018}\PYG{o}{.*}\PYG{p}{(}\PYG{n}{X}\PYG{o}{.\PYGZca{}}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.0215}\PYG{o}{.*}\PYG{p}{(}\PYG{n}{Y}\PYG{o}{.\PYGZca{}}\PYG{l+m+mi}{3}\PYG{p}{);}
+\PYG{+w}{     }\PYG{n}{f\PYGZus{}sum}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n+nb}{sum}\PYG{p}{(}\PYG{n}{f}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{;}
+
+\PYG{+w}{     }\PYG{c}{\PYGZpc{} Ασφάλεια: αν f\PYGZus{}sum == 0, προχώρησε στο επόμενο Ac (αποφυγή διαίρεσης/NaN)}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{f\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}
+\PYG{+w}{        }\PYG{k}{continue}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{     }\PYG{n}{Li\PYGZus{}mult\PYGZus{}fi}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{L}\PYG{o}{.*}\PYG{n}{f}\PYG{+w}{ }\PYG{p}{;}
+\PYG{+w}{     }\PYG{n}{SF}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{  }\PYG{n+nb}{sum}\PYG{p}{(}\PYG{n}{Li\PYGZus{}mult\PYGZus{}fi}\PYG{p}{)}\PYG{o}{/}\PYG{n+nb}{sum}\PYG{p}{(}\PYG{n}{L}\PYG{p}{);}
+
+\PYG{+w}{     }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{SF}\PYG{+w}{ }\PYG{o}{\PYGZgt{}=}\PYG{+w}{ }\PYG{l+m+mf}{0.6}
+\PYG{+w}{        }\PYG{n}{Ac\PYGZus{}found}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{Ac}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{break}
+\PYG{+w}{    }\PYG{k}{end}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZpc{} Εμφάνισε αποτέλεσμα}
+\PYG{k}{if}\PYG{+w}{ }\PYG{o}{\PYGZti{}}\PYG{n+nb}{isnan}\PYG{p}{(}\PYG{n}{Ac\PYGZus{}found}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Βρέθηκε Ac = \PYGZpc{}d με SF = \PYGZpc{}.4f\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ac\PYGZus{}found}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{SF}\PYG{p}{);}
+\PYG{k}{else}
+\PYG{+w}{    }\PYG{n+nb}{fprintf}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}Δεν βρέθηκε Ac \PYGZlt{}= \PYGZpc{}d που να δίνει SF \PYGZgt{}= 0.6. Τελευταίο SF = \PYGZpc{}.4f\PYGZbs{}n\PYGZsq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Ac\PYGZus{}max}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{SF}\PYG{p}{);}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZpc{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{c}{\PYGZpc{} erwtimama 2}
+
+\PYG{n}{V\PYGZus{}dexamenis}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{75}\PYG{o}{*}\PYG{n}{Ac}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} \PYGZdq{}lt\PYGZdq{}}
+
+\PYG{+w}{ }\PYG{n}{Vd}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{HKznx}\PYG{+w}{ }\PYG{p}{;}
+\PYG{+w}{ }\PYG{n}{Cp1}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{4.18}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{   }\PYG{c}{\PYGZpc{} kJ/(kg*K)}
+\PYG{+w}{ }\PYG{n}{Tcw}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{6.6}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{   }\PYG{c}{\PYGZpc{} \PYGZdq{}θερμοκρασία νερού δικτύου\PYGZdq{} πίνακας 2.6}
+\PYG{+w}{ }\PYG{n}{p\PYGZus{}den}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{   }\PYG{c}{\PYGZpc{} kg/lt}
+\PYG{+w}{ }\PYG{c}{\PYGZpc{}hls ΘΕΛΕΙ ΑΛΛΑΓΗ !!!}
+
+\PYG{+w}{ }\PYG{n}{Qdem\PYGZus{}HW}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Vd}\PYG{o}{*}\PYG{p}{(}\PYG{n}{Cp1}\PYG{o}{/}\PYG{l+m+mi}{3600}\PYG{p}{)}\PYG{o}{*}\PYG{n}{p\PYGZus{}den}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{45}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{Tcw}\PYG{p}{))}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{/}\PYG{n}{hls}\PYG{p}{);}
+\PYG{+w}{ }\PYG{n}{QHW}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{Qdem\PYGZus{}HW}\PYG{o}{/}\PYG{l+m+mi}{5}\PYG{+w}{ }\PYG{c}{\PYGZpc{}KWh ??}
+
+\PYG{+w}{ }\PYG{c}{\PYGZpc{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{ }\PYG{c}{\PYGZpc{} erwtimama 3}
+
+\PYG{+w}{ }\PYG{n}{h\PYGZus{}boiler}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.8}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} \PYGZdq{}σελίδα 34 οδηγός εργασίας\PYGZdq{}}
+\PYG{+w}{ }\PYG{n}{EF\PYGZus{}CO2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.264}\PYG{+w}{ }\PYG{p}{;}
+
+\PYG{+w}{ }\PYG{n}{E\PYGZus{}fuel}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{Qdem\PYGZus{}HW}\PYG{o}{*}\PYG{l+m+mi}{365}\PYG{o}{/}\PYG{n}{h\PYGZus{}boiler}\PYG{+w}{ }\PYG{p}{;}
+\PYG{+w}{ }\PYG{n}{mCo2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{EF\PYGZus{}CO2}\PYG{o}{*}\PYG{n}{E\PYGZus{}fuel}\PYG{+w}{ }\PYG{p}{;}
+
+
+\PYG{+w}{ }\PYG{n}{h\PYGZus{}pump}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.4}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZpc{} η αντλία θερμότητας καλύπτει το 40 \PYGZpc{} φορτίου}
+\PYG{+w}{ }\PYG{n}{COP}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mi}{4}\PYG{+w}{ }\PYG{p}{;}
+
+\PYG{+w}{ }\PYG{n}{E\PYGZus{}el}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{QHW}\PYG{o}{*}\PYG{l+m+mi}{365}\PYG{o}{*}\PYG{n}{h\PYGZus{}pump}\PYG{o}{/}\PYG{n}{COP}\PYG{+w}{ }\PYG{p}{;}
+\PYG{+w}{ }\PYG{n}{EF\PYGZus{}el}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.989}\PYG{p}{;}
+\PYG{+w}{ }\PYG{n}{mCo2\PYGZus{}new}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{EF\PYGZus{}el}\PYG{o}{*}\PYG{n}{E\PYGZus{}el}\PYG{+w}{ }\PYG{p}{;}
+
+\PYG{+w}{ }\PYG{n}{Dm\PYGZus{}Co2}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{mCo2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{mCo2\PYGZus{}new}\PYG{p}{)}
+
+\PYG{+w}{ }\PYG{c}{\PYGZpc{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+
+\PYG{+w}{ }\PYG{c}{\PYGZpc{} erwtimama 4}
+
+\PYG{n}{L\PYGZus{}dec}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{N}\PYG{p}{(}\PYG{l+m+mi}{12}\PYG{p}{)}\PYG{o}{*}\PYG{n}{HKznx}\PYG{o}{*}\PYG{n}{p}\PYG{o}{*}\PYG{n}{Cp}\PYG{o}{*}\PYG{p}{(}\PYG{n}{Tznx}\PYG{o}{\PYGZhy{}}\PYG{n}{Tk}\PYG{p}{)}\PYG{o}{*}\PYG{l+m+mi}{10}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{3}\PYG{p}{);}
+
+\PYG{n}{Vtank}\PYG{+w}{ }\PYG{p}{=}\PYG{+w}{ }\PYG{n}{L\PYGZus{}dec}\PYG{+w}{ }\PYG{o}{/}\PYG{p}{(}\PYG{n}{p}\PYG{o}{*}\PYG{n}{Cp}\PYG{o}{*}\PYG{p}{(}\PYG{l+m+mi}{45}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{Tcw}\PYG{p}{))}\PYG{+w}{ }\PYG{c}{\PYGZpc{}lt}
+\end{Verbatim}

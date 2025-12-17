@@ -1,0 +1,125 @@
+%%%ΡΥΘΜΙΣΕΙΣ ΤΗΣ ASAT
+% !TEX program = xelatex
+
+% ---------- Page Setup ----------
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+% ---------- Fonts and Language (XeLaTeX + Polyglossia for Greek) ----------
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{greek}
+\setotherlanguage{english}
+
+% Configure fonts with Greek support
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{DejaVu Sans Mono}
+\newfontfamily\greekfont[Script=Greek]{Noto Serif}
+\newfontfamily\greekfonttt[Script=Greek]{DejaVu Sans Mono}
+
+% ---------- Math and Science ----------
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}
+\sisetup{locale = DE, per-mode=symbol, group-separator={.}, group-minimum-digits=4}
+
+% ---------- Graphics ----------
+\usepackage{graphicx}
+
+% ---------- Background Images ----------
+%package needed for ASAT image template
+\usepackage{eso-pic}
+
+%create a macro named BackgroundPic for setting a background on the first page
+\newcommand\BackgroundPic{
+    \put(-3.4,0){
+    \parbox[b][\paperheight]{\paperwidth}{%
+    \vfill
+    \centering
+    \includegraphics[width=\paperwidth,height=\paperheight]{AERONAUTICS_REPORT_TEMPLATE.pdf}
+    \vfill
+    }}}
+%Info
+%turn contents name to Greek
+\addto\captionsenglish{
+    \renewcommand{\contentsname}{Περιεχόμενα}}
+
+% ---------- Code Listings ----------
+\usepackage{listings}
+\lstset{
+  language=Matlab,
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  showstringspaces=false,
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=false,
+  tabsize=2,
+  keepspaces=true,
+  columns=flexible,
+  xleftmargin=20pt,
+  xrightmargin=10pt,
+  backgroundcolor=\color{gray!10},
+  commentstyle=\color{green!50!black}\itshape,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{red!60!black},
+  morecomment=[l][\color{magenta}]{\#},
+  literate={*}{{\char42}}1 {-}{{\char45}}1
+}
+
+% ---------- Tables and Colors ----------
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+% ---------- Page Skipping ----------
+\usepackage{atbegshi}
+
+%    %include page geometry packages
+%\usepackage{natbib}
+%\usepackage{graphicx}
+%\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+
+
+
+
+%%%%%%%%%%%%%%%Απο εδώ και πέρα είναι δικιές μου ρυθμίσεις
+
+% ---------- Custom Commands ----------
+% Define textDelta command for Greek letter Delta
+\newcommand{\textDelta}{Δ}
+
+%Προσθέτω την ικανότητα να μπορώ να δημιουργώ κουτάκια Hint με χρήση της εντολής \begin{Hint}{πχ συνάρτηση μεταφοράς}{} \end{Hint}
+\usepackage[skins,theorems]{tcolorbox}
+\newtcbtheorem[number within=section,list inside=Hint]{Hint}{Hint}%
+{colback=blue!5,colframe=cyan!35!black,colbacktitle=blue!35!black,fonttitle=\bfseries,enhanced,attach boxed title to top left={yshift=-2mm,xshift=-2mm}}{def}
+
+
+%Προσθέτω την δυνατότητα του να μπορώ να προσθέτω σελίδες απο διάφορα pdf χρησιμοποιώντας την εντολή πχ \includepdf[pages={68-74}]{smi_shmeioseis_2008.pdf}
+\usepackage{pdfpages}
+
+
+
+%Δημιουργώ την εντολή \red{} η οποία μου επιτρέπει να γράφω κόκκινο κείμενο 
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+
+% Δημιουργώ την εντολή \green{} η οποία μου επιτρέπει να γράφω πράσινο κείμενο
+\newcommand{\green}[1]{\textcolor{green!50!black}{#1}}
+
+% Δημιουργώ την εντολή \blue{} η οποία μου επιτρέπει να γράφω μπλε κείμενο
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+
+% ---------- Hyperlinks Configuration ----------
+% Δημιουργώ την ικανότητα να έχω url με μπλε χρώμα τα οποία θα είναι clickable links
+%URL: Μπορείς να βάλεις url με την εντολή \url{} και μετά καθορίζει οτι τα γράμματα του url θα είναι μπλέ
+\usepackage[colorlinks = true,
+            linkcolor = blue!40!black!95!green,
+            urlcolor  = cyan!70!black,
+            citecolor = blue!50!black,
+            anchorcolor = blue,
+            unicode,
+            hidelinks = false]{hyperref}

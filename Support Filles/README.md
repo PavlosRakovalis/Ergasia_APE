@@ -4,25 +4,59 @@ This repository is prepared as a small LaTeX workspace that you can use as an al
 - An example XeLaTeX document that uses Greek (`examples/report.tex`).
 - A `Makefile` and `build.sh` to compile the example with `xelatex` (via `latexmk`).
 - A `Dockerfile` and `.devcontainer/devcontainer.json` so you can open the Codespace in a reproducible container with TeX Live installed.
+- **Clean workspace organization**: All auxiliary files (`.aux`, `.log`, `.out`, etc.) are automatically placed in a `build/` subdirectory, keeping your main folders clean.
+
+## Project Structure
+
+Your workspace will stay organized like this:
+
+```
+your-project/
+├── your-document.tex          # Your LaTeX source file
+├── your-document.pdf          # Generated PDF (copied from build/)
+├── images/                    # Your images/figures
+│   └── diagram.png
+├── build/                     # Hidden folder with all auxiliary files
+│   ├── your-document.aux
+│   ├── your-document.log
+│   ├── your-document.out
+│   ├── your-document.synctex.gz
+│   └── ...
+```
+
+The `build/` folder is hidden in VS Code Explorer by default, so you only see your `.tex` files, images, and the final PDF!
 
 ## Quick usage (local machine)
+
+### Option 1: Use the installation script (easiest)
+
+```bash
+cd "Support Filles"
+./install-latex.sh
+```
+
+This script will install all required packages on Ubuntu/Debian systems.
+
+### Option 2: Manual installation
 
 Install the needed packages on Ubuntu (example):
 
 ```bash
 sudo apt update
-sudo apt install -y latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-greek fonts-noto fonts-dejavu-core
+sudo apt install -y latexmk texlive-xetex texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-lang-greek texlive-science fonts-noto fonts-dejavu-core
 ```
+
+### Building the PDF
 
 Then build the example PDF:
 
 ```bash
 make
 # or
-./build.sh examples/report.tex
+./build.sh "../Tex Filles/ PDFS/examples/report.tex"
 ```
 
-The PDF will be created next to the `.tex` file (for the sample: `examples/report.pdf`).
+The PDF will be created next to the `.tex` file (at: `../Tex Filles/ PDFS/examples/report.pdf`).
 
 ## Using the Docker container (recommended for Codespaces)
 
@@ -56,6 +90,12 @@ The recommended VS Code extension inside the container is LaTeX Workshop (alread
 
 - If the container build fails because a font package name changed in Ubuntu, adjust the package list in `Dockerfile` (common fonts with Greek glyphs: `fonts-dejavu-core`, `fonts-noto`, `fonts-lato`, `fonts-freefont-ttf`).
 - If you need extra LaTeX packages, add them to the `Dockerfile` (via apt or install from CTAN) or use TeX Live manager `tlmgr` if available.
+- **If your LaTeX file doesn't compile**: 
+  - Make sure XeLaTeX and all required packages are installed (run `./install-latex.sh` if on Ubuntu/Debian)
+  - Check that the first line of your .tex file is `% !TEX program = xelatex`
+  - For Greek language support, make sure you're using `fontspec` and `polyglossia` packages
+  - Verify that the required fonts (Noto Serif, Noto Sans, DejaVu Sans Mono) are installed
+  - Use `-pdfxe` flag with latexmk instead of `-xelatex` for better compatibility
 
 ## Files added
 
