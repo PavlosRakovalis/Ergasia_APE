@@ -45,7 +45,38 @@
 
 % ---------- Code Listings ----------
 \usepackage{listings}
-\lstset{
+
+% Python code style for FEM code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Python,
+    frame=single
+}
+
+\lstset{style=pythonstyle}
+
+% Matlab style (original)
+\lstdefinestyle{matlabstyle}{
   language=Matlab,
   basicstyle=\ttfamily\footnotesize,
   numbers=left,
