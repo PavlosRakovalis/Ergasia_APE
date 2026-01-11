@@ -1,901 +1,215 @@
-% !TEX program = xelatex
-\documentclass[10pt,a4paper]{article}
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+
+\documentclass[]{article}
 \input{preamble.tex}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ---------- Title ----------
-\title{\vspace{1.2cm}\textbf{Μέθοδος Πεπερασμένων Στοιχείων (FEM)\\
-Επιλύτης 3D Στοιχείων Δοκού}\\
-\large Τεκμηρίωση Κώδικα και Αναφορά Υλοποίησης}
+\usepackage{xcolor}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen}
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{}
+\urlstyle{same}
+\hypersetup{hidelinks,pdfcreator={LaTeX via pandoc}}
 
-\author{Παύλος Ρακοβαλής 6931   }
-\date{\textbf{Δεκέμβριος 2025}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author{}
+\date{}
 
-%document starts here
 \begin{document}
 
-%set AERONAUTICS_REPORT_TEMPLATE as template JUST for this page
-%the asterisk means it will be set just for this page
-\AddToShipoutPicture*{\BackgroundPic}
-\maketitle
+\includegraphics[width=2.41667in,height=1.28056in]{LOGO.png}
 
+    	extbf{Μελέτη εγκατάστασης παραγωγής Ηλεκτρικής Ενέργειας ΑΠΕ}
 
-%shows contents automatically
-\tableofcontents{}
+    	extbf{Ελευθέριος Πουλάκης \& Παύλος Ρακοβαλής}
 
+    	extbf{(6930 \& 6931)}
 
+\hypertarget{περιεχόμενα}{%
+\section{\texorpdfstring{Περιεχόμενα }{Περιεχόμενα }}\label{περιεχόμενα}}
 
+\protect\hyperlink{eισαγωγή}{1 Eισαγωγή \protect\hyperlink{eισαγωγή}{3}}
 
+\protect\hyperlink{ερώτημα-1-διαστασιολόγηση-του-νέου-συστήματος}{Ερώτημα 1: Διαστασιολόγηση του νέου συστήματος \protect\hyperlink{ερώτημα-1-διαστασιολόγηση-του-νέου-συστήματος}{3}}
 
-%leave space before contents
-\vspace{4cm}
+\protect\hyperlink{σύστημα-φωτοβολταικών}{Σύστημα Φωτοβολταικών \protect\hyperlink{σύστημα-φωτοβολταικών}{4}}
 
+\protect\hyperlink{σύστημα-ανεμογεννήτριας}{Σύστημα Ανεμογεννήτριας \protect\hyperlink{σύστημα-ανεμογεννήτριας}{5}}
 
-%change page
-\pagebreak
+\protect\hyperlink{σύστημα-αποθήκευσης}{Σύστημα Αποθήκευσης \protect\hyperlink{σύστημα-αποθήκευσης}{8}}
 
+\protect\hyperlink{ερώτημα-2-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{Ερώτημα 2 : Υπολογισμός Εκπομπών CO2 και καταναλισκώμενης ενέργειας \protect\hyperlink{ερώτημα-2-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{8}}
 
-%create new command about pics on all other pages
-\ClearShipoutPicture
-\newcommand\Bgpic{
-    \put(-4,0){
-    \parbox[b][\paperheight]{\paperwidth}{%
-    \vfill
-    \centering
-    \includegraphics[width=\paperwidth,height=\paperheight]{AERONAUTICS_REPORT_TEMPLATE-pages-2.pdf}
-    \vfill
-    }}}
+\protect\hyperlink{ερώτημα-3-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{Ερώτημα 3 : Υπολογισμός Εκπομπών CO2 και καταναλισκώμενης ενέργειας \protect\hyperlink{ερώτημα-3-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{9}}
 
-%set background picture for every page after page 2, including page 2
-%see, no asterisk
-\AddToShipoutPicture{\Bgpic}
+\hypertarget{eισαγωγή}{%
+\section{1 Eισαγωγή}\label{eισαγωγή}}
 
-% Skip specific pages (8, 14, 17)
-\AtBeginShipout{%
-  \ifnum\value{page}=8
-    \AtBeginShipoutDiscard
-  \fi
-  \ifnum\value{page}=14
-    \AtBeginShipoutDiscard
-  \fi
-  \ifnum\value{page}=17
-    \AtBeginShipoutDiscard
-  \fi
-}
+Η παρούσα μελέτη εστιάζει στον ενεργειακό ανασχεδιασμό ενός αυτόνομου συστήματος ηλεκτροπαραγωγής, το οποίο βασίζεται αρχικά αποκλειστικά σε θερμική παραγωγή μέσω μονάδων Diesel. Στόχος της μελέτης είναι η μετάβαση σε ένα Υβριδικό Ενεργειακό Σύστημα (Hybrid Energy System), το οποίο θα ενσωματώνει Τεχνολογίες Ανανεώσιμων Πηγών Ενέργειας (ΑΠΕ) ---συγκεκριμένα Φωτοβολταϊκά (Φ/Β) και Ανεμογεννήτριες (Α/Γ)--- με παράλληλη χρήση συστημάτων αποθήκευσης ενέργειας (συσσωρευτές). Τέλος χρησιμοποιήθηκε κώδικας MATLAB με σκοπό να δοθούν απαντήσεις στα απαραίτητα ερωτήματα
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hypertarget{ερώτημα-1-διαστασιολόγηση-του-νέου-συστήματος}{%
+\section{Ερώτημα 1: Διαστασιολόγηση του νέου συστήματος}\label{ερώτημα-1-διαστασιολόγηση-του-νέου-συστήματος}}
 
-\section{Εισαγωγή}
+Αρχικά η τοποθεσία διαστασιολόγησης καθορίστηκε από τον άθρισμα των στοιχείων του ΑΕΜ μας και είναι η κλιματική ζώνη Α .
 
-Η παρούσα αναφορά τεκμηριώνει μια ολοκληρωμένη υλοποίηση λογισμικού Μεθόδου Πεπερασμένων Στοιχείων (FEM) για την ανάλυση τρισδιάστατων κατασκευών δοκών. Το λογισμικό ακολουθεί μια αρθρωτή αρχιτεκτονική με τρία κύρια συστατικά:
+Υπολογίσαμε τη μέγιστη ισχύ ηλεκτρικής κατανάλωσης από τους τύπους:
+
+\[E_{cons} = \left\lbrack 500 + 50*\left( 20 - T_{a} \right) \right\rbrack*N\ \ \ (X)\]
+
+\[E_{cons} = \left\lbrack 500 + 50*\left( T_{a} - 18 \right) \right\rbrack*N\ \ \ (K)\]
+
+Όπου:
 
 \begin{itemize}
-    \item \textbf{Προεπεξεργαστής} (\texttt{preprocessor.py}): Δημιουργία γεωμετρίας, οριακές συνθήκες και εξαγωγή δεδομένων
-    \item \textbf{Επιλύτης} (\texttt{solver.py}): Συναρμολόγηση και επίλυση συστήματος FEM
-    \item \textbf{Μετεπεξεργαστής} (\texttt{postprocessor.py}): Οπτικοποίηση και ανάλυση αποτελεσμάτων
+\item \textbf{N}: αριθμός κατοίκων* (επιλέξαμε Ν = 1750 κατοίκους )
+\item \textbf{Ta}: η μέση μηνιαία θερμοκρασία (πιν. 3.1 ΤΟΤΕΕ0701-3)*
+\item \textbf{X}: Χειμώνας, Κ: Καλοκαίρι**
 \end{itemize}
 
-Η υλοποίηση χειρίζεται τρισδιάστατα στοιχεία δοκών με 6 βαθμούς ελευθερίας (DOF) ανά κόμβο: τρεις μεταφορικές μετατοπίσεις $(U_x, U_y, U_z)$ και τρεις περιστροφικές μετατοπίσεις $(R_x, R_y, R_z)$.
+Σε αυτό το σημείο αξίζει να σημειώσουμε οτι επειδη στις κλιματικές ζώνες Α,Β η περίοδος θέρμανσης είναι από τη 1\textsuperscript{η} Νοεμβρίου μέχρι τις 15 Απριλίου και η περίοδος ψύξης είνια από τις 15 Mαίου έως τις 15 Σεπτεμβρίου. Γι αυτό το λόγο υπολογίσαμε την \(E_{cons}\) για κάθε μία από αυτές τις θερμοκρασίες και η τελική \(E_{cons}\) για το καλοκαίρι και το χειμώνα αντίστοιχα υπολογίζεται από τους τύπους :
 
-\subsection{Κύρια Χαρακτηριστικά}
+\[E_{cons} = \ \frac{E_{cons}(4)*0.5 + \sum_{11}^{12}{E_{cons}(i) + \sum_{1}^{3}{E_{cons}(i)}}}{6}\]
+
+\[E_{cons} = \ \frac{E_{cons}(5)*0.5 + \sum_{6}^{8}{E_{cons}(i) + E_{cons}(9)}}{5}\]
+
+\begin{quote}
+Όπου i o αριθμός κάθε μήνα
+
+Στη συνέχεια υπολογίσαμε το εμβαδόν του χωρίου της καμπύλης του ποσοστού ονομαστικού φορτίου ανά ώρα το οποίο βγαίνει 960 \%h. Παολλαπλασιάζοντας την μέγιστη ισχύ ηλεκτρικής κατανάλωσης με τον αυτόν τον συντελεστή (9.6) μπορέσαμε να προσριορίσουμε την κατανάλωση συμβατικής ενέργειας σε kwh
+
+\includegraphics[width=5.15833in,height=3.17228in]{Photos/image2.png}
+\end{quote}
+
+\hypertarget{σύστημα-φωτοβολταικών}{%
+\subsection{\texorpdfstring{Σύστημα Φωτοβολταικών }{Σύστημα Φωτοβολταικών }}\label{σύστημα-φωτοβολταικών}}
+
+\begin{quote}
+Για τη διαστασιολόγηση του συστήματος φωτοβολταικών βασιστήκαμε στους τύπους :
+\end{quote}
 
 \begin{itemize}
-    \item Υποστήριξη για σύνθετες τρισδιάστατες κατασκευές πλαισίων και δοκών
-    \item Αυτόματη δημιουργία στοιχείων με παράλληλα προς άξονες και διαγώνια ενισχυτικά στοιχεία
-    \item Γεωμετρικοί μετασχηματισμοί (περιστροφή γύρω από αυθαίρετους άξονες)
-    \item Ιδιότητες δοκών κυκλικής διατομής
-    \item Ολοκληρωμένος χειρισμός οριακών συνθηκών
-    \item Διαδραστική οπτικοποίηση με χρήση Plotly
-    \item Αρθρωτή, επεκτάσιμη αρχιτεκτονική
+\item Υπολογισμός ενεργειακής παραγωγής των ΦΒ:
 \end{itemize}
 
-\section{Μαθηματική Θεμελίωση}
-
-\subsection{Διατύπωση Τρισδιάστατου Στοιχείου Δοκού}
-
-Για ένα τρισδιάστατο στοιχείο δοκού με 6 DOF ανά κόμβο, ο τοπικός πίνακας δυσκαμψίας είναι $12 \times 12$. Το στοιχείο περιλαμβάνει:
+\[E_{\eta\lambda} = \eta_{pv}*H_{t}*A\ \]
 
 \begin{itemize}
-    \item \textbf{Αξονική παραμόρφωση}: Σχετίζεται με το μέτρο ελαστικότητας $E$ και την εγκάρσια διατομή $A$
-    \item \textbf{Στρέψη}: Σχετίζεται με το μέτρο διάτμησης $G$ και τη σταθερά στρέψης $J$
-    \item \textbf{Κάμψη}: Σχετίζεται με το $E$ και τις ροπές αδράνειας $I_y$, $I_z$
+\item \(\mathbf{\eta}_{\mathbf{pv}}\) : ονομαστική απόδοση ΦΒ
+\item \(\mathbf{H}_{\mathbf{t}}\) : H προσπίπτουσα ηλιακή ενέργεια στο επίπεδο του PV / μονάδα επιφανείας (KWh/m\^{}2)
+\item \(\mathbf{A}\) : επιφάνεια φωτοβολταικού
 \end{itemize}
-
-Οι συντελεστές δυσκαμψίας υπολογίζονται ως:
-\begin{align}
-k_{αξονική} &= \frac{EA}{L} \\
-k_{στρέψη} &= \frac{GJ}{L} \\
-k_{κάμψη,y} &= \frac{12EI_y}{L^3}, \quad \frac{6EI_y}{L^2}, \quad \frac{4EI_y}{L}, \quad \frac{2EI_y}{L} \\
-k_{κάμψη,z} &= \frac{12EI_z}{L^3}, \quad \frac{6EI_z}{L^2}, \quad \frac{4EI_z}{L}, \quad \frac{2EI_z}{L}
-\end{align}
-
-\subsection{Μετασχηματισμός Συντεταγμένων}
-
-Ο μετασχηματισμός από τοπικές σε ολικές συντεταγμένες χρησιμοποιεί συνημίτονα κατεύθυνσης:
-\begin{equation}
-\mathbf{K}_{ολικός} = \mathbf{T}^T \mathbf{K}_{τοπικός} \mathbf{T}
-\end{equation}
-
-όπου $\mathbf{T}$ είναι ο πίνακας μετασχηματισμού $12 \times 12$ που κατασκευάζεται από τον πίνακα περιστροφής $3 \times 3$.
-
-\section{Αρχιτεκτονική Λογισμικού}
-
-\subsection{Επισκόπηση Μονάδων}
-
-Το λογισμικό είναι οργανωμένο σε τέσσερις κύριες μονάδες Python:
-
-\begin{enumerate}
-    \item \textbf{FEM\_Main.py}: Κύριο σενάριο εκτέλεσης
-    \item \textbf{preprocessor.py}: Δημιουργία γεωμετρίας και προετοιμασία δεδομένων
-    \item \textbf{solver.py}: Υλοποίηση επιλύτη FEM
-    \item \textbf{postprocessor.py}: Οπτικοποίηση αποτελεσμάτων
-    \item \textbf{geometry\_utils.py}: Βοηθητικά προγράμματα γεωμετρικού μετασχηματισμού
-\end{enumerate}
-
-\begin{figure}[H]
-\centering
-\begin{verbatim}
-    +------------------+
-    |   FEM_Main.py    |
-    +------------------+
-             |
-             v
-    +------------------+       +-------------------+
-    | preprocessor.py  | ----> | structure.dat     |
-    +------------------+       +-------------------+
-             |                          |
-             v                          v
-    +------------------+       +-------------------+
-    |   solver.py      | ----> | structure.res     |
-    +------------------+       +-------------------+
-             |                          |
-             v                          v
-    +------------------+       +-------------------+
-    | postprocessor.py | ----> | Διαδραστικά Plots |
-    +------------------+       +-------------------+
-\end{verbatim}
-\caption{Ροή εργασίας λογισμικού και ροή δεδομένων}
-\end{figure}
-
-\section{Μονάδα Προεπεξεργαστή}
-
-Ο προεπεξεργαστής (\texttt{preprocessor.py}) είναι υπεύθυνος για τη δημιουργία της δομικής γεωμετρίας, τον ορισμό οριακών συνθηκών και την εξαγωγή δεδομένων σε τυποποιημένη μορφή.
-
-\subsection{Δομή Κλάσης}
-
-Η κύρια κλάση είναι η \texttt{FEMPreProcessor}:
-
-\begin{lstlisting}[caption={Αρχικοποίηση Κλάσης FEMPreProcessor}]
-class FEMPreProcessor:
-    """Handles geometry creation and boundary conditions for FEM analysis"""
-    
-    def __init__(self):
-        self.points = pd.DataFrame(columns=['Node Number', 'X', 'Y', 'Z'])
-        self.elements = pd.DataFrame(columns=['Element Number', 'Node1', 'Node2', 'E', 'V'])
-        self.boundary_conditions = {}  # node_id: {'Ux': 0/1, 'Uy': 0/1, 'Uz': 0/1, 'Rx': 0/1, 'Ry': 0/1, 'Rz': 0/1}
-        self.loads = {}  # node_id: {'Fx': value, 'Fy': value, 'Fz': value, 'Mx': value, 'My': value, 'Mz': value}
-        self.materials = {'STEEL': {'E': 210e9, 'nu': 0.3}}
-        
-        # Beam properties (circular cross-section)
-        self.diameter = 0.020  # 20mm diameter circular cross-section
-\end{lstlisting}
-
-\subsection{Ιδιότητες Κυκλικής Διατομής}
-
-Για κυκλικές διατομές, οι γεωμετρικές ιδιότητες υπολογίζονται ως εξής:
-
-\begin{lstlisting}[caption={Υπολογισμός Ιδιοτήτων Κυκλικής Διατομής}]
-def _calculate_circular_properties(self, diameter):
-    """Calculate geometric properties for circular cross-section"""
-    r = diameter / 2.0
-    
-    # Cross-sectional area
-    A = np.pi * r**2
-    
-    # Second moment of area (Iz = Iy for circular section)
-    I = (np.pi * r**4) / 4.0
-    Iz = I
-    Iy = I
-    
-    # Torsional constant (polar moment of inertia)
-    J = (np.pi * r**4) / 2.0
-    
-    return {'A': A, 'Iz': Iz, 'Iy': Iy, 'J': J, 'diameter': diameter, 'radius': r}
-\end{lstlisting}
-
-Αυτοί οι τύποι υλοποιούν τις τυπικές σχέσεις για κυκλικές διατομές:
-\begin{align}
-A &= \pi r^2 \\
-I_y = I_z &= \frac{\pi r^4}{4} \\
-J &= \frac{\pi r^4}{2} = 2I
-\end{align}
-
-\subsection{Δημιουργία Γεωμετρίας}
-
-Η δημιουργία γεωμετρίας περιλαμβάνει πολλαπλά βήματα, συμπεριλαμβανομένου του ορισμού κόμβων, της δημιουργίας στοιχείων και των γεωμετρικών μετασχηματισμών.
-
-\begin{lstlisting}[caption={Ορισμός Παραμέτρων Γεωμετρίας}]
-def _define_geometry_parameters(self):
-    """Define geometry-specific parameters (not saved to .dat file)"""
-    # COMPLEX GEOMETRY: Original crane/truss structure
-    # Geometry parameters for this specific crane/truss structure
-    self.L = 1.5 * 1.13      # Element length (m)
-    self.A = 1.2 * 1.69      # Base dimension (m)
-    self.B = 1.93            # Additional parameter B (m)
-    self.phi = 60 + 9.1      # Rotation angle (degrees)
-    self.A_0 = 6 * (0.5 + 0.13)  # Base cross-section parameter (dimensionless)
-\end{lstlisting}
-
-\subsection{Δημιουργία Στοιχείων}
-
-Τα στοιχεία δημιουργούνται αυτόματα με βάση μοτίβα συνδεσιμότητας:
-
-\begin{lstlisting}[caption={Δημιουργία Στοιχείων Παράλληλων προς Άξονες}]
-def _create_axis_aligned_elements(self, element_counter, tolerance, max_length):
-    """Create elements parallel to X, Y, or Z axes"""
-    axis_aligned_count = 0
-    for i in range(len(self.points)):
-        node1 = self.points.iloc[i]
-        node1_num = int(node1['Node Number'])
-        
-        for j in range(i + 1, len(self.points)):
-            node2 = self.points.iloc[j]
-            node2_num = int(node2['Node Number'])
-            
-            dx = abs(node2['X'] - node1['X'])
-            dy = abs(node2['Y'] - node1['Y'])
-            dz = abs(node2['Z'] - node1['Z'])
-            
-            element_length = np.sqrt(dx**2 + dy**2 + dz**2)
-            
-            if element_length > max_length:
-                continue
-            
-            # Check axis alignment
-            is_x_aligned = dx > tolerance and dy < tolerance and dz < tolerance
-            is_y_aligned = dx < tolerance and dy > tolerance and dz < tolerance
-            is_z_aligned = dx < tolerance and dy < tolerance and dz > tolerance
-\end{lstlisting}
-
-\subsection{Οριακές Συνθήκες και Φορτία}
-
-Ο προεπεξεργαστής παρέχει μεθόδους για τον ορισμό οριακών συνθηκών και εφαρμοζόμενων φορτίων:
-
-\begin{lstlisting}[caption={Προσθήκη Οριακών Συνθηκών}]
-def add_boundary_condition(self, node_id, ux=1, uy=1, uz=1, rx=1, ry=1, rz=1):
-    """
-    Add boundary condition for a node
-    
-    Parameters:
-    -----------
-    node_id : int
-        Node number (1-based)
-    ux, uy, uz : int
-        Translation constraints (1=fixed, 0=free)
-    rx, ry, rz : int
-        Rotation constraints (1=fixed, 0=free)
-    """
-    self.boundary_conditions[node_id] = {
-        'Ux': ux, 'Uy': uy, 'Uz': uz,
-        'Rx': rx, 'Ry': ry, 'Rz': rz
-    }
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Προσθήκη Φορτίων}]
-def add_load(self, node_id, fx=0.0, fy=0.0, fz=0.0, mx=0.0, my=0.0, mz=0.0):
-    """
-    Add load (forces and moments) to a node
-    
-    Parameters:
-    -----------
-    node_id : int
-        Node number (1-based)
-    fx, fy, fz : float
-        Force components in Newtons
-    mx, my, mz : float
-        Moment components in Newton-meters
-    """
-    self.loads[node_id] = {
-        'Fx': fx, 'Fy': fy, 'Fz': fz,
-        'Mx': mx, 'My': my, 'Mz': mz
-    }
-\end{lstlisting}
-
-\subsection{Εξαγωγή Δεδομένων}
-
-Ο προεπεξεργαστής εξάγει όλα τα δομικά δεδομένα σε ένα αρχείο κειμένου σε δομημένη μορφή:
-
-\begin{lstlisting}[caption={Εξαγωγή σε Αρχείο DAT}]
-def export_to_file(self, filename='data/structure.dat'):
-    """Export structure to text file for solver"""
-    print("\nEXPORTING STRUCTURE DATA")
-    print("="*80)
-    
-    # Ensure directory exists
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    
-    with open(filename, 'w') as f:
-        # Write header
-        f.write("# FEM Structure Data File\n")
-        f.write("# Generated by FEM Pre-Processor (Beam Elements)\n")
-        f.write("# Author: Rakovalis Pavlos 6931\n\n")
-        
-        # Write parameters
-        f.write("PARAMETERS\n")
-        props = self._calculate_circular_properties(self.diameter)
-        f.write(f"{self.E} {props['A']} {props['Iz']} {props['Iy']} {props['J']} {self.G} {self.diameter}\n\n")
-        
-        # Write materials
-        f.write("MATERIALS\n")
-        for mat_name, props in self.materials.items():
-            f.write(f"{mat_name} {props['E']} {props['nu']}\n")
-        f.write("\n")
-        
-        # Write nodes
-        f.write("NODES\n")
-        for idx in range(len(self.points)):
-            node = self.points.iloc[idx]
-            f.write(f"{int(node['Node Number'])} {node['X']:.10f} {node['Y']:.10f} {node['Z']:.10f}\n")
-        f.write("\n")
-        
-        # Write elements
-        f.write("ELEMENTS\n")
-        for idx in range(len(self.elements)):
-            elem = self.elements.iloc[idx]
-            f.write(f"{int(elem['Element Number'])} {int(elem['Node1'])} {int(elem['Node2'])} ")
-            f.write(f"{elem['Element Cross Section']:.10e} {elem['E']:.10e} {elem['V']:.10f}\n")
-        f.write("\n")
-\end{lstlisting}
-
-\section{Μονάδα Βοηθητικών Προγραμμάτων Γεωμετρίας}
-
-Η μονάδα \texttt{geometry\_utils.py} παρέχει συναρτήσεις γεωμετρικού μετασχηματισμού.
-
-\subsection{Περιστροφή Γύρω από τον Άξονα Y}
-
-\begin{lstlisting}[caption={Συνάρτηση Περιστροφής Σημείων}]
-def rotate_points_around_y(df: pd.DataFrame, angle_deg: float, origin=(0.0, 0.0, 0.0)) -> pd.DataFrame:
-    """
-    Rotate all points around the global Y-axis by angle_deg degrees.
-
-    Args:
-        df: DataFrame with columns ['X','Y','Z'] (and optionally 'Node Number']).
-        angle_deg: Rotation angle in degrees (right-hand rule about +Y).
-        origin: Pivot point (x0, y0, z0) to rotate about. Defaults to the global origin.
-
-    Returns:
-        A new DataFrame with rotated coordinates.
-    """
-    theta = np.deg2rad(angle_deg)
-    c, s = np.cos(theta), np.sin(theta)
-    # Rotation about Y: Ry = [[c,0,s],[0,1,0],[-s,0,c]]
-    R = np.array([[c, 0.0, s],
-                  [0.0, 1.0, 0.0],
-                  [-s, 0.0, c]])
-
-    coords = df[['X', 'Y', 'Z']].to_numpy(dtype=float)
-    pivot = np.array(origin, dtype=float)
-    rotated = (coords - pivot) @ R.T + pivot
-
-    out = df.copy()
-    out[['X', 'Y', 'Z']] = rotated
-    return out
-\end{lstlisting}
-
-Ο πίνακας περιστροφής γύρω από τον άξονα Y δίνεται από:
-\begin{equation}
-\mathbf{R}_y(\theta) = \begin{bmatrix}
-\cos\theta & 0 & \sin\theta \\
-0 & 1 & 0 \\
--\sin\theta & 0 & \cos\theta
-\end{bmatrix}
-\end{equation}
-
-\section{Μονάδα Επιλύτη}
-
-Ο επιλύτης (\texttt{solver.py}) χειρίζεται τη συναρμολόγηση και την επίλυση του συστήματος FEM.
-
-\subsection{Δομή Κλάσης}
-
-\begin{lstlisting}[caption={Αρχικοποίηση Κλάσης FEMBeamSolver}]
-class FEMBeamSolver:
-    """Handles FEM system assembly and solution for 3D beam elements"""
-    
-    def __init__(self):
-        self.nodes = pd.DataFrame()
-        self.elements = pd.DataFrame()
-        self.boundary_conditions = {}
-        self.loads = {}
-        self.materials = {}
-        
-        # Beam parameters
-        self.E = 0.0
-        self.A = 0.0
-        self.Iz = 0.0
-        self.Iy = 0.0
-        self.J = 0.0
-        self.G = 0.0
-        self.diameter = 0.0
-        
-        # Solution arrays (6 DOF per node)
-        self.dof_per_node = 6
-        self.K_global = None
-        self.F_global = None
-        self.u_global = None
-        self.reactions = None
-\end{lstlisting}
-
-\subsection{Υπολογισμός Πίνακα Μετασχηματισμού}
-
-Ο πίνακας μετασχηματισμού συσχετίζει τοπικά και ολικά συστήματα συντεταγμένων:
-
-\begin{lstlisting}[caption={Υπολογισμός Πίνακα Μετασχηματισμού}]
-def _compute_transformation_matrix(self, x1, y1, z1, x2, y2, z2):
-    """Compute 3x3 transformation matrix for beam local coordinate system"""
-    # Element length and direction cosines
-    dx = x2 - x1
-    dy = y2 - y1
-    dz = z2 - z1
-    L = np.sqrt(dx**2 + dy**2 + dz**2)
-    
-    # Local x-axis (along beam element)
-    x_local = np.array([dx/L, dy/L, dz/L])
-    
-    # Define auxiliary vector for determining local y and z axes
-    # Use global Y-axis as reference, unless element is parallel to Y
-    if abs(x_local[1]) > 0.9:  # Nearly vertical element
-        aux = np.array([1.0, 0.0, 0.0])  # Use global X as auxiliary
-    else:
-        aux = np.array([0.0, 1.0, 0.0])  # Use global Y as auxiliary
-    
-    # Local z-axis (perpendicular to x_local and aux)
-    z_local = np.cross(x_local, aux)
-    z_local = z_local / np.linalg.norm(z_local)
-    
-    # Local y-axis (perpendicular to x and z)
-    y_local = np.cross(z_local, x_local)
-    y_local = y_local / np.linalg.norm(y_local)
-    
-    # 3x3 transformation matrix [x_local, y_local, z_local] as rows
-    T = np.vstack([x_local, y_local, z_local])
-    
-    return T, L
-\end{lstlisting}
-
-Ο πίνακας μετασχηματισμού επεκτείνεται από $3 \times 3$ σε $12 \times 12$ για 6 DOF ανά κόμβο:
-
-\begin{lstlisting}[caption={Επέκταση Πίνακα Μετασχηματισμού}]
-def _expand_transformation_matrix(self, T):
-    """Expand 3x3 transformation to 12x12 for 6 DOF per node"""
-    T_12x12 = np.zeros((12, 12))
-    # Apply transformation to each 3x3 block (translations and rotations)
-    for i in range(4):
-        T_12x12[3*i:3*i+3, 3*i:3*i+3] = T
-    return T_12x12
-\end{lstlisting}
-
-\subsection{Τοπικός Πίνακας Δυσκαμψίας}
-
-Ο τοπικός πίνακας δυσκαμψίας ενσωματώνει αξονικές, στρεπτικές και καμπτικές συνεισφορές:
-
-\begin{lstlisting}[caption={Συναρμολόγηση Τοπικού Πίνακα Δυσκαμψίας (Μερική)}]
-def _create_local_stiffness_matrix(self, L):
-    """Create 12x12 local stiffness matrix for 3D beam element"""
-    k_local = np.zeros((12, 12))
-    
-    # Axial stiffness (DOF 0 and 6)
-    EA_L = self.E * self.A / L
-    k_local[0, 0] = EA_L
-    k_local[0, 6] = -EA_L
-    k_local[6, 0] = -EA_L
-    k_local[6, 6] = EA_L
-    
-    # Torsional stiffness (DOF 3 and 9)
-    GJ_L = self.G * self.J / L
-    k_local[3, 3] = GJ_L
-    k_local[3, 9] = -GJ_L
-    k_local[9, 3] = -GJ_L
-    k_local[9, 9] = GJ_L
-    
-    # Bending in local XY plane (about Z axis) - DOF 1, 5, 7, 11
-    EIz_L3 = self.E * self.Iz / (L**3)
-    k_local[1, 1] = 12 * EIz_L3
-    k_local[1, 5] = 6 * EIz_L3 * L
-    k_local[1, 7] = -12 * EIz_L3
-    k_local[1, 11] = 6 * EIz_L3 * L
-    
-    k_local[5, 1] = 6 * EIz_L3 * L
-    k_local[5, 5] = 4 * EIz_L3 * L**2
-    k_local[5, 7] = -6 * EIz_L3 * L
-    k_local[5, 11] = 2 * EIz_L3 * L**2
-    
-    # ... (similar terms for other DOF)
-    
-    return k_local
-\end{lstlisting}
-
-\subsection{Συναρμολόγηση Ολικού Συστήματος}
-
-Ο ολικός πίνακας δυσκαμψίας συναρμολογείται μετασχηματίζοντας τον τοπικό πίνακα δυσκαμψίας κάθε στοιχείου σε ολικές συντεταγμένες και προσθέτοντας τις συνεισφορές:
-
-\begin{lstlisting}[caption={Συναρμολόγηση Ολικού Πίνακα Δυσκαμψίας (Μερική)}]
-def assemble_stiffness_matrix(self):
-    """Assemble global stiffness matrix for beam elements"""
-    print("\nASSEMBLING GLOBAL STIFFNESS MATRIX (BEAM ELEMENTS)")
-    print("="*80)
-    
-    num_nodes = len(self.nodes)
-    n_dof = self.dof_per_node * num_nodes  # 6 DOF per node
-    
-    self.K_global = np.zeros((n_dof, n_dof))
-    
-    # Loop through all elements
-    for idx in range(len(self.elements)):
-        elem = self.elements.iloc[idx]
-        
-        node1_num = int(elem['Node1'])
-        node2_num = int(elem['Node2'])
-        
-        # Get node coordinates
-        node1 = self.nodes[self.nodes['Node Number'] == node1_num].iloc[0]
-        node2 = self.nodes[self.nodes['Node Number'] == node2_num].iloc[0]
-        
-        x1, y1, z1 = node1['X'], node1['Y'], node1['Z']
-        x2, y2, z2 = node2['X'], node2['Y'], node2['Z']
-\end{lstlisting}
-
-\subsection{Επίλυση Συστήματος}
-
-Μετά την εφαρμογή των οριακών συνθηκών, το σύστημα επιλύεται χρησιμοποιώντας τον επιλύτη γραμμικής άλγεβρας του NumPy:
-
-\begin{lstlisting}[caption={Επίλυση Συστήματος}]
-def solve(self):
-    """Solve the FEM system"""
-    print("\nSOLVING FEM SYSTEM")
-    print("="*80)
-    
-    # Identify fixed DOFs
-    fixed_dofs = []
-    for node_id, bc in self.boundary_conditions.items():
-        node_idx = node_id - 1  # Convert to 0-based
-        if bc['Ux'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 0)
-        if bc['Uy'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 1)
-        if bc['Uz'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 2)
-        if bc['Rx'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 3)
-        if bc['Ry'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 4)
-        if bc['Rz'] == 1:
-            fixed_dofs.append(node_idx * self.dof_per_node + 5)
-    
-    fixed_dofs = np.array(fixed_dofs, dtype=int)
-    all_dofs = np.arange(len(self.F_global))
-    free_dofs = np.setdiff1d(all_dofs, fixed_dofs)
-    
-    # Reduce system to free DOFs
-    K_reduced = self.K_global[np.ix_(free_dofs, free_dofs)]
-    F_reduced = self.F_global[free_dofs]
-    
-    # Check conditioning
-    cond = np.linalg.cond(K_reduced)
-    print(f"  Condition number: {cond:.2e}")
-    
-    if cond > 1e10:
-        print("  WARNING: Stiffness matrix is ill-conditioned")
-    
-    # Solve for free DOFs
-    u_reduced = np.linalg.solve(K_reduced, F_reduced)
-    
-    # Expand to full displacement vector
-    self.u_global = np.zeros(len(self.F_global))
-    self.u_global[free_dofs] = u_reduced
-    
-    print(f"✓ System solved successfully")
-\end{lstlisting}
-
-\section{Μονάδα Μετεπεξεργαστή}
-
-Ο μετεπεξεργαστής (\texttt{postprocessor.py}) παρέχει δυνατότητες διαδραστικής οπτικοποίησης.
-
-\subsection{Δομή Κλάσης}
-
-\begin{lstlisting}[caption={Αρχικοποίηση Κλάσης FEMPostProcessor}]
-class FEMPostProcessor:
-    """Handles visualization of FEM results"""
-    
-    def __init__(self):
-        self.nodes = pd.DataFrame()
-        self.elements = pd.DataFrame()
-        self.displacements = pd.DataFrame()
-        self.reactions = pd.DataFrame()
-        self.element_forces = pd.DataFrame()
-        self.summary = {}
-\end{lstlisting}
-
-\subsection{Οπτικοποίηση Παραμορφωμένης Κατασκευής}
-
-Ο μετεπεξεργαστής δημιουργεί διαδραστικές τρισδιάστατες οπτικοποιήσεις με ρυθμιζόμενη μεγέθυνση:
-
-\begin{lstlisting}[caption={Γράφημα Παραμορφωμένης Κατασκευής με Slider (Μερικό)}]
-def plot_deformed_structure(self, magnification=1.0, show_plot=True):
-    """Plot undeformed and deformed structure with interactive magnification slider"""
-    print("\nCREATING DEFORMATION PLOT WITH INTERACTIVE SLIDER")
-    print("="*80)
-    
-    fig = go.Figure()
-    
-    # Undeformed structure (always shown)
-    edge_x_undef, edge_y_undef, edge_z_undef = [], [], []
-    for idx in range(len(self.elements)):
-        node1_num = int(self.elements.iloc[idx]['Node1'])
-        node2_num = int(self.elements.iloc[idx]['Node2'])
-        
-        node1 = self.nodes[self.nodes['Node Number'] == node1_num].iloc[0]
-        node2 = self.nodes[self.nodes['Node Number'] == node2_num].iloc[0]
-        
-        edge_x_undef.extend([node1['X'], node2['X'], None])
-        edge_y_undef.extend([node1['Y'], node2['Y'], None])
-        edge_z_undef.extend([node1['Z'], node2['Z'], None])
-    
-    fig.add_trace(go.Scatter3d(
-        x=edge_x_undef, y=edge_y_undef, z=edge_z_undef,
-        mode='lines',
-        line=dict(color='cyan', width=4),
-        name='Undeformed',
-        visible=True,
-        opacity=0.9
-    ))
-    
-    # Create deformed structures for different magnifications
-    magnifications = [1, 10, 50, 100, 500, 1000, 2000, 5000]
-    
-    for mag in magnifications:
-        # Deformed structure
-        deformed_nodes = self.nodes.copy()
-        for idx in range(len(self.nodes)):
-            node_num = int(self.nodes.iloc[idx]['Node Number'])
-            disp = self.displacements[self.displacements['Node Number'] == node_num].iloc[0]
-            
-            deformed_nodes.loc[idx, 'X'] += disp['Ux'] * mag
-            deformed_nodes.loc[idx, 'Y'] += disp['Uy'] * mag
-            deformed_nodes.loc[idx, 'Z'] += disp['Uz'] * mag
-\end{lstlisting}
-
-\subsection{Οπτικοποίηση Τάσεων και Παραμορφώσεων}
-
-Ο μετεπεξεργαστής δημιουργεί επίσης οπτικοποίηση των κατανομών τάσεων και παραμορφώσεων:
-
-\begin{lstlisting}[caption={Γράφημα Κατανομής Τάσεων (Μερικό)}]
-def plot_stress_distribution(self, show_plot=True):
-    """Plot stress distribution on elements"""
-    print("\nCREATING STRESS DISTRIBUTION PLOT")
-    print("="*80)
-    
-    fig = go.Figure()
-    
-    # Get stress values
-    stresses = self.element_forces['Stress'].values
-    max_abs_stress = np.max(np.abs(stresses))
-    
-    # Color mapping
-    edge_x, edge_y, edge_z, edge_colors = [], [], [], []
-    
-    for idx in range(len(self.elements)):
-        node1_num = int(self.elements.iloc[idx]['Node1'])
-        node2_num = int(self.elements.iloc[idx]['Node2'])
-        
-        node1 = self.nodes[self.nodes['Node Number'] == node1_num].iloc[0]
-        node2 = self.nodes[self.nodes['Node Number'] == node2_num].iloc[0]
-        
-        stress = stresses[idx]
-        
-        # Create line segment for each element
-        edge_x.extend([node1['X'], node2['X'], None])
-        edge_y.extend([node1['Y'], node2['Y'], None])
-        edge_z.extend([node1['Z'], node2['Z'], None])
-        edge_colors.extend([stress, stress, None])
-\end{lstlisting}
-
-\section{Κύριο Σενάριο Εκτέλεσης}
-
-Το σενάριο \texttt{FEM\_Main.py} συντονίζει ολόκληρη τη διαδικασία ανάλυσης:
-
-\begin{lstlisting}[caption={Πλήρης Διαδικασία Ανάλυσης FEM}]
-def main():
-    """Execute the complete FEM analysis pipeline"""
-    
-    print("\n" + "="*80)
-    print("FEM ANALYSIS - COMPLETE PIPELINE")
-    print("="*80 + "\n")
-    
-    # Step 1: Pre-processor
-    print("STEP 1: Running Pre-Processor...")
-    print("-"*80)
-    import preprocessor
-    preprocessor.main()
-    
-    print("\n" + "="*80 + "\n")
-    
-    # Step 2: Solver
-    print("STEP 2: Running Solver...")
-    print("-"*80)
-    import solver
-    solver.main()
-    
-    print("\n" + "="*80 + "\n")
-    
-    # Step 3: Post-processor
-    print("STEP 3: Running Post-Processor...")
-    print("-"*80)
-    import postprocessor
-    postprocessor.main()
-    
-    print("\n" + "="*80)
-    print("FEM ANALYSIS COMPLETED SUCCESSFULLY")
-    print("="*80 + "\n")
-    
-    print("Results available in:")
-    print("  - data/structure.dat (input data)")
-    print("  - data/structure.res (results)")
-    print("  - plots/ (interactive visualizations)")
-    print("  - output_html/ (data tables)")
-    print("\nOpen the HTML files in plots/ folder to view interactive results.")
-\end{lstlisting}
-
-\section{Μορφές Αρχείων Δεδομένων}
-
-\subsection{Μορφή Αρχείου Εισόδου (.dat)}
-
-Το αρχείο ορισμού κατασκευής έχει την ακόλουθη μορφή:
-
-\begin{verbatim}
-PARAMETERS
-E A Iz Iy J G diameter
-
-MATERIALS
-STEEL E nu
-
-NODES
-node_id x y z
-
-ELEMENTS
-elem_id node1 node2 cross_section E nu
-
-BOUNDARY_CONDITIONS
-node_id Ux Uy Uz Rx Ry Rz
-
-LOADS
-node_id Fx Fy Fz Mx My Mz
-
-END
-\end{verbatim}
-
-\subsection{Μορφή Αρχείου Αποτελεσμάτων (.res)}
-
-Το αρχείο αποτελεσμάτων περιέχει:
-
-\begin{verbatim}
-DISPLACEMENTS
-node_id Ux Uy Uz Rx Ry Rz |U| |R|
-
-REACTIONS
-node_id Rx Ry Rz Mx My Mz
-
-ELEMENT_FORCES
-elem_id Axial Shear_Y Shear_Z Torsion Moment_Y Moment_Z Stress Strain
-
-SUMMARY
-max_displacement value
-max_stress value
-max_strain value
-
-END
-\end{verbatim}
-
-\section{Παράδειγμα Χρήσης}
-
-Για να χρησιμοποιήσετε το λογισμικό για μια προσαρμοσμένη κατασκευή:
-
-\begin{enumerate}
-    \item \textbf{Ορίστε Γεωμετρία}: Επεξεργαστείτε τις μεθόδους \texttt{\_define\_geometry\_parameters()} και \texttt{\_add\_initial\_nodes()} στο \texttt{preprocessor.py}
-    
-    \item \textbf{Ορίστε Οριακές Συνθήκες}: Προσθέστε σταθερούς κόμβους χρησιμοποιώντας \texttt{add\_boundary\_condition()}
-    
-    \item \textbf{Εφαρμόστε Φορτία}: Ορίστε φορτία χρησιμοποιώντας \texttt{add\_load()}
-    
-    \item \textbf{Εκτελέστε Ανάλυση}: Εκτελέστε \texttt{python FEM\_Main.py}
-    
-    \item \textbf{Δείτε Αποτελέσματα}: Ανοίξτε τα δημιουργημένα αρχεία HTML στον κατάλογο \texttt{plots/}
-\end{enumerate}
-
-\section{Επικύρωση}
-
-Ο κώδικας έχει επικυρωθεί έναντι αναλυτικών λύσεων για απλές κατασκευές. Για παράδειγμα, μια τετραεδρική κατασκευή πλαισίου αναλύθηκε και τα αποτελέσματα αντιστοιχούσαν στην αναλυτική λύση που τεκμηριώνεται στο αρχείο \texttt{README.md}.
-
-\subsection{Δοκιμαστική Περίπτωση: Απλή Τετραεδρική Κατασκευή}
-
-\textbf{Γεωμετρία:}
-\begin{itemize}
-    \item 4 κόμβοι που σχηματίζουν τετράεδρο
-    \item 6 στοιχεία ράβδων
-    \item 3 σταθεροί κόμβοι, 1 φορτισμένος κόμβος
-\end{itemize}
-
-\textbf{Ιδιότητες Υλικού:}
-\begin{itemize}
-    \item $E = 210$ GPa (Χάλυβας)
-    \item $A = 4$ cm$^2$
-\end{itemize}
-
-\textbf{Φόρτιση:}
-\begin{itemize}
-    \item $F_x = 1000$ N σε ελεύθερο κόμβο
-\end{itemize}
-
-Οι υπολογισμένες μετατοπίσεις και τάσεις αντιστοιχούν στην αναλυτική λύση εντός αριθμητικής ακρίβειας.
-
-\section{Συμπεράσματα}
-
-Αυτή η υλοποίηση λογισμικού FEM παρέχει μια πλήρη λύση για την ανάλυση τρισδιάστατων κατασκευών δοκών. Τα κύρια επιτεύγματα περιλαμβάνουν:
 
 \begin{itemize}
-    \item Ισχυρή διατύπωση τρισδιάστατου στοιχείου δοκού με 6 DOF ανά κόμβο
-    \item Αρθρωτή αρχιτεκτονική που διευκολύνει τη συντήρηση και επέκταση κώδικα
-    \item Αυτόματη δημιουργία στοιχείων για σύνθετες γεωμετρίες
-    \item Ολοκληρωμένες δυνατότητες οπτικοποίησης
-    \item Επικυρωμένο έναντι αναλυτικών λύσεων
+\item Υπολογισμός του βαθμού απόδοσης\({\ \eta}_{pv}\) :
 \end{itemize}
 
-\subsection{Μελλοντικές Βελτιώσεις}
+\[\eta_{pv} = \ \eta_{nm_{pv}}*\sigma_{\gamma}*\sigma_{\theta}*0.7\]
 
-Πιθανές βελτιώσεις για μελλοντικές εκδόσεις:
 \begin{itemize}
-    \item Υποστήριξη για μη κυκλικές διατομές
-    \item Μη γραμμικότητα υλικού
-    \item Δυνατότητες δυναμικής ανάλυσης
-    \item Αλγόριθμοι βελτίωσης πλέγματος
-    \item Διεπαφή GUI για ορισμό γεωμετρίας
+\item \(\mathbf{\sigma}_{\mathbf{\gamma}}\) : συντελεστής γήρανσης
+\item \(\mathbf{\sigma}_{\mathbf{\theta}}\) : συντελεστής αύξησης της θερμοκρασίας
+\item \(\mathbf{\eta}_{\mathbf{n}\mathbf{m}_{\mathbf{pv}}}\) \textbf{:} ονομαστική απόδοση πλαισίου
 \end{itemize}
 
-\section{Αναφορές}
+Αλλάζοντας συνέχως την επιφάνεια των φωτοβολταικών μέχρι να πετύχουμε το επιθυμητό ποσοστό κάλυψης (60\% ) επιλέχθηκε τελική τιμή \textbf{300m\^{}2} , ενώ η ετήσια παργώμενη ενέργεια των φωτοβολταικών είναι ίση με \textbf{2.7200e+05 kwh}
 
-\begin{enumerate}
-    \item Bathe, K. J. (1996). \textit{Finite Element Procedures}. Prentice Hall.
-    \item Zienkiewicz, O. C., \& Taylor, R. L. (2000). \textit{The Finite Element Method}. Butterworth-Heinemann.
-    \item Cook, R. D., Malkus, D. S., Plesha, M. E., \& Witt, R. J. (2001). \textit{Concepts and Applications of Finite Element Analysis}. Wiley.
-\end{enumerate}
+\hypertarget{σύστημα-ανεμογεννήτριας}{%
+\subsection{Σύστημα Ανεμογεννήτριας}\label{σύστημα-ανεμογεννήτριας}}
 
-\appendix
+\begin{quote}
+Για τη διαστασιολόγηση του συστήματος Ανεμογεννήτριας βασιστήκαμε στις παρακάτω σχέσεις:
+\end{quote}
 
-\section{Πλήρεις Λίστες Κώδικα}
-
-Για τις πλήρεις λεπτομέρειες υλοποίησης, ανατρέξτε στα ακόλουθα αρχεία:
 \begin{itemize}
-    \item \texttt{preprocessor.py} (752 γραμμές)
-    \item \texttt{solver.py} (694 γραμμές)
-    \item \texttt{postprocessor.py} (732 γραμμές)
-    \item \texttt{geometry\_utils.py} (29 γραμμές)
-    \item \texttt{FEM\_Main.py} (56 γραμμές)
+\item Υπολογισμός πιθανότητας η ταχύτητα του ανέμου να είναι ίση με Vi :
 \end{itemize}
 
-\section{Εξαρτήσεις Λογισμικού}
+\[hi = \left( \frac{k}{c} \right)*\left( \frac{Vi}{c} \right)^{k - 1}*e^{\frac{Vi}{c}}\]
 
-Η υλοποίηση απαιτεί τα ακόλουθα πακέτα Python:
 \begin{itemize}
-    \item \texttt{numpy}: Αριθμητικοί υπολογισμοί
-    \item \texttt{pandas}: Διαχείριση δομών δεδομένων
-    \item \texttt{plotly}: Διαδραστική οπτικοποίηση
+\item \(\mathbf{h}\mathbf{i}\) : πιθανότητα η ταχύτητα του ανέμου να είναι ίση με Vi (m/s)
+\item \(\mathbf{\kappa}\) : o παράγοντας σχήματος της κατανομής Weibull
+\item \(\mathbf{c}\mathbf{\ :}\) o παράγοντας μεγέθους (έντασης) της κατανομής Weibull {[}m/s{]}
 \end{itemize}
 
-Εγκαταστήστε τις εξαρτήσεις χρησιμοποιώντας:
-\begin{verbatim}
-pip install numpy pandas plotly
-\end{verbatim}
+Οι χάρτες αιολικού δυναμικού αναφέρονται σε μετρήσεις στα 10 m ύψος (href). Για το λόγο αυτό, η εκτίμηση της ταχύτητας Α/Γ γίνεται στο ύψος του ρότορα, δηλαδή του πύργου. Η μετατροπή γίνεται σύμφωνα με τη σχέση:
+
+\[Vh( = Vave) = V*{(\frac{h}{h_{ref}})}^{a}\]
+
+\begin{itemize}
+\item \(\mathbf{Vh}\) : εκτίμηση της ταχύτητας Α/Γ
+\item \textbf{a} : είναι συντελεστής που σχετίζεται με την τραχύτητα του εδάφους.
+\item \(\mathbf{c}\mathbf{\ :}\) o παράγοντας μεγέθους (έντασης) της κατανομής Weibull {[}m/s{]}
+\item \(\mathbf{h}_{\mathbf{ref}}\mathbf{:}\) ύψος αναφοράς (10m)
+\item \(\mathbf{h}\mathbf{\ :\ }\) ύψος άξονα (πήραμε ότι h = 20m)
+\item \(\mathbf{V}\) \textbf{:} Μέση ετήσια ταχύτητα ανέμου
+\end{itemize}
+
+Εφόσον γνωρίζουμε το Vh μπορούμε να προσδιορίσουμε τον από τον τύπο Vh = c/0.886 .
+
+Επιλέξαμε την ανεμογεννήρια Vestas V80 - 2MW. Παρακάτω φαίνεται η χαρακτηριστική καμπύλη της ανεμογεννήτριας :
+
+\includegraphics[width=4.68333in,height=4.24167in]{Photos/image3.png}
+
+Η συνολική ενέργεια που παράγει η ανεμογενήτρια υπολογίζεται από τη παρακάτω σχέση:
+
+\[E_{WT} = \ \sum_{i = 1}^{25}{t_{i}*P_{i}}\]
+
+Όπου \(t_{i}\) είναι ο ετήσιος αριθμός ωρών εμφάνισης της εκάστοτε ταχύτητας i (υπολογίζεται από τον τύπο ti = 8760*hi) και \(P_{i}\) είναι η ισχύς σε Kw για την εκάστοτε ταχύτητα και προκύπτυ από την καμπύλη της ανεμογεννήτριας. Τέλος Υπολογίσαμε ότι η ετήσια ενέργεια που παράγει η ανεμογεννήτρια \textbf{2.6190e+06 Kwh}
+
+\hypertarget{σύστημα-αποθήκευσης}{%
+\subsection{Σύστημα Αποθήκευσης}\label{σύστημα-αποθήκευσης}}
+
+Για τη διαστασιολόγηση του συστληματος αποθήκευσης βασιστήκαμε στον τύπο:
+
+\[C = \frac{E_{ds}}{U_{\sigma}*\beta*\eta_{\sigma}}\]
+
+\begin{itemize}
+\item \(\mathbf{E}_{\mathbf{ds}}\) : H ημερήσια παραγόμενη ενέργεια {[}Wh{]}
+\item \(\mathbf{\beta}\) : βάθος εκφόρτισης
+\item \(\mathbf{\eta}_{\mathbf{\sigma}}\mathbf{:}\) βαθμός απόδοσης
+\item \(\mathbf{C}\) \textbf{:} Χωρητικότητα Ah
+\item \(\mathbf{U}_{\mathbf{\sigma}}\) \textbf{:} Τάση εκφόρτισης (600V)
+\end{itemize}
+
+Επίσης κάνουμε μια επαύξηση της χωρητικότητας κατα 25\%.Η τελική τιμή που υπολογίστηκε από την χωρητικότητα είναι : \textbf{C = 40002 Ah}
+
+\hypertarget{section}{%
+\section{}\label{section}}
+
+\hypertarget{ερώτημα-2-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{%
+\section{Ερώτημα 2 : Υπολογισμός Εκπομπών CO2 και καταναλισκώμενης ενέργειας}\label{ερώτημα-2-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}}
+
+Η ενεργεια που καταναλώνει ο κινητήρας disel υπολογίζεται από τον τύπο:
+
+\[E_{disel} = \frac{E_{cons}}{\eta}\]
+
+\begin{itemize}
+\item \(\mathbf{E}_{\mathbf{cons}}\) : Ετήσια καταναλισκόμενη ενέργεια
+\item \(\mathbf{\eta\ }\mathbf{:}\) βαθμός απόδοσης
+\end{itemize}
+
+Η καταναλισκόμενη ενέργεια του Disel είναι ίση με \textbf{1.1928e+07} \textbf{ΚWh .} οι εκπομπές CO2 για ηλεκτρισμό είναι 0.85 kg/kWh απο τον πήνακα του οδηγού σελ. 13 .Πολλαπλασιάζοντας την ενέργεια αυτή με τον συντελεστή εκπομπών παίρνουμε: \textbf{1.0139e+07} \textbf{kg CO2}
+
+Η καταναλεισκώμενη ενέργεια του κινητήρα disel μετά την εγκατάσταση των ΑΠΕ υπολογίζεται από τον τύπο:
+
+\[E_{disel}' = \frac{\left( 1 - F_{RES} \right)*E_{cons}}{\eta}\]
+
+Η καταναλισκόμενη ενέργεια του Disel μετα την εγκατάσταση ΑΠΕ είναι ίση με \textbf{4.7004e+06 ΚWh} και παίρνουμε \textbf{3.9954e+06 CO2.} Συνεπώς με την εγκατάσταση των ΑΠΕ καταφέραμε να εξοικονομήσουμε \textbf{6.1433e+06} \textbf{kg CO2}
+
+\hypertarget{ερώτημα-3-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}{%
+\section{Ερώτημα 3 : Υπολογισμός Εκπομπών CO2 και καταναλισκώμενης ενέργειας}\label{ερώτημα-3-υπολογισμός-εκπομπών-co2-και-καταναλισκώμενης-ενέργειας}}
+
+Οι αλλαγές που επιλέξαμε να μεταβάλλουμε είναι 2 .Η πρώτη αλλάγη αφορά την αντικατάσταση της ανεμογεννήτριας 2 ΜW V80 σε 2 μικρότερες των 1.5 ΜW V63 με στόχο να αξιολογήσουμε την αύξηση του ποσοστού κάλυψης . Παρατηρούμε ότι το ποσοστό κάλυψης αυξήθηκε από \textbf{60.06\%} σε \textbf{65\%} οστώσο θα έπρεπε ενα πραγματικό σενάριο να λάβουμε υπ όψιν και την αύξηση του κόστους για να αξιολογήσουμε μια τέτοια επένδυση.Η 2\textsuperscript{η} αλλαγή που επιλέαμε να κάνουμε είναι να αλλάξουμε την κλιματική ζώνη από Α σε Δ επιλέγοντας σαν πόλη τα Ιωάννινα με στόχο να δούμε τη μεταβολή του ποσοσστού κάλυψης . Παρατηρούμε ότι το ποσοστό κάλυψης έπεσε στο \textbf{6.5 \%} .Αυτό είναι λογικό εφόσον στη περιοχή των Ιωαννίνων η ταχύτητα του ανέμου είναι σημαντικά μικρότερη από αυτή του Ηρακλείου (1- 2.1) αλλα και η προσπίπτουσα ηλιακή ενέργεια ανα μονάδα επιφανείας είναι επίσης μικρότερη. Συνεπώς αν θέλουμε να καλύψουμε αυτή τη ζήτηση στη πόλη των Ιωαννίνων θα χρειαστούμε συμαντικά μεγαλύτερη επιφάνεια φωτοβολταικών και μεγαλύτερη Α/Γ ή περισσότερες Α/Γ
 
 \end{document}

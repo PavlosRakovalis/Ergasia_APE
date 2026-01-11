@@ -1,0 +1,112 @@
+% !TEX program = xelatex
+\documentclass[10pt,a4paper]{article}
+\input{preamble.tex}
+
+% -------------------------------------------------
+% Title page metadata
+% -------------------------------------------------
+\title{\vspace{1.2cm}\textbf{Μελέτη Εγκατάστασης Παραγωγής Ηλεκτρικής Ενέργειας ΑΠΕ}\\[4pt]
+\large Απλοποιημένη αναφορά συμβατή με το Rakovalis template}
+\author{Ελευθέριος Πουλάκης \and Παύλος Ρακοβαλής\\\small ΑΕΜ: 6930 \& 6931}
+\date{Ιανουάριος 2026}
+
+\begin{document}
+
+% First-page background (only once)
+\AddToShipoutPicture*{\BackgroundPic}
+\maketitle
+\tableofcontents
+\vspace{3cm}
+\pagebreak
+
+% Background for the remaining pages
+\ClearShipoutPicture
+\newcommand\Bgpic{
+    \put(-4,0){
+    \parbox[b][\paperheight]{\paperwidth}{%
+    \vfill
+    \centering
+    \includegraphics[width=\paperwidth,height=\paperheight]{AERONAUTICS_REPORT_TEMPLATE-pages-2.pdf}
+    \vfill
+    }}}
+\AddToShipoutPicture{\Bgpic}
+
+% -------------------------------------------------
+\section{Εισαγωγή}
+Η μελέτη αφορά τον ενεργειακό ανασχεδιασμό ενός αυτόνομου συστήματος ηλεκτροπαραγωγής που αρχικά βασίζεται αποκλειστικά σε μονάδες Diesel. Στόχος είναι η μετάβαση σε υβριδικό σύστημα με Φωτοβολταϊκά (Φ/Β), Ανεμογεννήτριες (Α/Γ) και σύστημα αποθήκευσης, αξιοποιώντας υπολογισμούς σε MATLAB για τις ενεργειακές ροές.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{media/image1.png}{\includegraphics[width=0.5\textwidth]{media/image1.png}}{\fbox{Προσθέστε το λογότυπο στο media/image1.png}}
+    \vspace{6pt}
+    \caption{Πλαίσιο τίτλου (προσθέστε δικό σας λογότυπο αν απαιτείται).}
+\end{figure}
+
+% -------------------------------------------------
+\section{Ερώτημα 1: Διαστασιολόγηση νέου συστήματος}
+Η τοποθεσία καθορίστηκε από το άθροισμα των ΑΕΜ και ανήκει στην κλιματική ζώνη Α. Η μέγιστη ισχύς κατανάλωσης εκτιμάται για χειμώνα (X) και καλοκαίρι (K):
+\begin{align}
+E_{\text{cons,X}} &= \bigl[500 + 50\,(20 - T_a)\bigr] \cdot N,\\
+E_{\text{cons,K}} &= \bigl[500 + 50\,(T_a - 18)\bigr] \cdot N,
+\end{align}
+όπου $N=1750$ κάτοικοι και $T_a$ η μέση μηνιαία θερμοκρασία.
+
+Η εποχική κατανάλωση προκύπτει κατά μέσο όρο από:
+\begin{align}
+E_{\text{cons,win}} &= \frac{0.5\,E_{\text{cons}}(4) + \sum_{i=11}^{12}E_{\text{cons}}(i) + \sum_{i=1}^{3}E_{\text{cons}}(i)}{6},\\
+E_{\text{cons,sum}} &= \frac{0.5\,E_{\text{cons}}(5) + \sum_{i=6}^{8}E_{\text{cons}}(i) + E_{\text{cons}}(9)}{5}.
+\end{align}
+
+Ο συντελεστής φορτίου 9.6 (προκύπτει από το εμβαδόν της καμπύλης ποσοστού ονομαστικού φορτίου) δίνει την ετήσια κατανάλωση συμβατικής ενέργειας σε kWh.
+
+\subsection{Σύστημα Φωτοβολταϊκών}
+Η παραγωγή Φ/Β εκτιμάται ως:
+\begin{align}
+E_{\text{pv}} &= \eta_{\text{pv}} \cdot H_t \cdot A,\\
+\eta_{\text{pv}} &= \eta_{\text{nm,pv}} \cdot \sigma_\gamma \cdot \sigma_\theta \cdot 0.7.
+\end{align}
+Επιλέχθηκε επιφάνεια $A=300\,\text{m}^2$ ώστε να επιτευχθεί κάλυψη \SI{60}{\percent}, με ετήσια παραγωγή περίπου $2.72\times 10^{5}\,\text{kWh}$.
+
+\subsection{Σύστημα Ανεμογεννήτριας}
+Η πιθανότητα ταχύτητας $V_i$ (Weibull) δίνεται από:
+\begin{equation}
+h_i = \frac{k}{c}\left(\frac{V_i}{c}\right)^{k-1} e^{-(V_i/c)^k},
+\end{equation}
+με παράγοντες σχήματος $k$ και μεγέθους $c$. Η προσαρμογή ύψους γίνεται με
+\begin{equation}
+V_h = V \left(\frac{h}{h_{ref}}\right)^a, \quad h=20\,\text{m},\ h_{ref}=10\,\text{m}.
+\end{equation}
+Επιλέχθηκε Α/Γ \textbf{Vestas V80 -- 2 MW}. Η ετήσια παραγωγή υπολογίζεται από
+\begin{equation}
+E_{\text{WT}} = \sum_{i=1}^{25} t_i P_i, \quad t_i = 8760\,h_i,
+\end{equation}
+δίνοντας περίπου $2.62\times 10^{6}\,\text{kWh}$.
+
+\subsection{Σύστημα Αποθήκευσης}
+Η απαιτούμενη χωρητικότητα είναι
+\begin{equation}
+C = \frac{E_{\text{ds}}}{U_{\sigma}\,\beta\,\eta_{\sigma}},
+\end{equation}
+με $U_{\sigma}=600\,\text{V}$. Με προσαύξηση \SI{25}{\percent} προκύπτει $C\approx 4.0\times 10^{4}\,\text{Ah}$.
+
+% -------------------------------------------------
+\section{Ερώτημα 2: Εκπομπές CO\textsubscript{2} και κατανάλωση}
+Η κατανάλωση Diesel χωρίς ΑΠΕ:
+\begin{equation}
+E_{\text{diesel}} = \frac{E_{\text{cons}}}{\eta},
+\end{equation}
+με εκπομπές $0.85\,\text{kg CO}_2/\text{kWh}$: συνολικά $1.01\times 10^{7}\,\text{kg CO}_2$.
+
+Με διείσδυση ΑΠΕ $F_{\text{RES}}$:
+\begin{equation}
+E'_{\text{diesel}} = \frac{(1-F_{\text{RES}})\,E_{\text{cons}}}{\eta},
+\end{equation}
+δίνονται $4.70\times 10^{6}\,\text{kWh}$ και $3.99\times 10^{6}\,\text{kg CO}_2$, εξοικονόμηση $6.14\times 10^{6}\,\text{kg CO}_2$.
+
+% -------------------------------------------------
+\section{Ερώτημα 3: Εναλλακτικά σενάρια}
+\textbf{Αλλαγή Α/Γ}: Αντικατάσταση της \SI{2}{MW} V80 με δύο \SI{1.5}{MW} V63 αυξάνει το ποσοστό κάλυψης από \SI{60.06}{\percent} σε περίπου \SI{65}{\percent}, με πιθανή αύξηση κόστους.
+
+\textbf{Αλλαγή κλιματικής ζώνης}: Μετάβαση στη ζώνη Δ (π.χ. Ιωάννινα) μειώνει το αιολικό και ηλιακό δυναμικό, ρίχνοντας την κάλυψη κοντά στο \SI{6.5}{\percent}. Απαιτούνται μεγαλύτερες επιφάνειες Φ/Β και/ή περισσότερες Α/Γ για ισοδύναμη κάλυψη.
+
+\end{document}
